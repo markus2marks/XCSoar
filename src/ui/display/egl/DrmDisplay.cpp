@@ -110,7 +110,7 @@ DrmDisplay::DrmDisplay()
     throw MakeErrno("drmModeGetResources() failed");
 
   findConnector(dri_fd, resources);
-  auto *connector = this->m_connectors[0];
+  auto *connector = this->m_connectors[1];
   connector_id = connector->connector_id;
 
   if (auto *encoder = drmModeGetEncoder(dri_fd.Get(), connector->encoder_id)) {
