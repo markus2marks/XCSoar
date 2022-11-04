@@ -260,8 +260,7 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
 
   PixelSize p(480,480);
 
-  TopWindow *const round_window = new TopWindow(roundDisplay);
-   round_window->Create("teest", p);
+
 
 
   LogFormat("Display dpi=%u,%u",
@@ -292,6 +291,9 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
 
   CommonInterface::SetUISettings().SetDefaults();
   main_window->Initialise();
+
+  UI::TopWindow *const round_window = new UI::TopWindow(roundDisplay);
+    round_window->Create("teest", p);
 
   round_window->Initialise();
 
