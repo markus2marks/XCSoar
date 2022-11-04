@@ -26,7 +26,7 @@ Copyright_License {
 namespace UI { class Display; }
 
 bool
-Startup(UI::Display &display, UI::Display &roundDisplay);
+Startup(UI::Display &display);
 
 void
 Shutdown();

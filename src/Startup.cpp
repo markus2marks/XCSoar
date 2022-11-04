@@ -231,7 +231,7 @@ UI::Display d;
  * @return True if bootup successful, False otherwise
  */
 bool
-Startup(UI::Display &display, UI::Display &roundDisplay)
+Startup(UI::Display &display)
 {
   VerboseOperationEnvironment operation;
   operation.SetProgressRange(1024);
@@ -257,7 +257,6 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
   main_window->Create(SystemWindowSize(), style);
   if (!main_window->IsDefined())
     return false;
-d = roundDisplay;
 //  PixelSize p(480,480);
 //
 //  MainWindow *const round_window = new MainWindow(roundDisplay);
