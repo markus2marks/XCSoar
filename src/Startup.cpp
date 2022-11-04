@@ -224,7 +224,7 @@ try {
 } catch (...) {
   LogError(std::current_exception(), "LoadTerrain failed");
 }
-
+UI::Display d;
 /**
  * "Boots" up XCSoar
  * @param lpCmdLine Command line string
@@ -257,11 +257,13 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
   main_window->Create(SystemWindowSize(), style);
   if (!main_window->IsDefined())
     return false;
-
-  MainWindow *const round_window = new MainWindow(roundDisplay);
-  round_window->Create(SystemWindowSize(), style);
-  if (!round_window->IsDefined())
-    return false;
+d = roundDisplay;
+//  PixelSize p(480,480);
+//
+//  MainWindow *const round_window = new MainWindow(roundDisplay);
+//  round_window->Create(p, style);
+//  if (!round_window->IsDefined())
+//    return false;
 
   LogFormat("Display dpi=%u,%u",
             Display::GetDPI(display).x, Display::GetDPI(display).y);
@@ -292,7 +294,7 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
   CommonInterface::SetUISettings().SetDefaults();
   main_window->Initialise();
 
-  round_window->Initialise();
+//  round_window->Initialise();
 
 #ifdef SIMULATOR_AVAILABLE
   // prompt for simulator if not set by command line argument "-simulator" or "-fly"
