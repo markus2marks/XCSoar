@@ -101,6 +101,8 @@ public:
   PixelSize GetSizeMM() const noexcept {
     return size_mm;
   }
+
+  void findConnector(FileDescriptor dri_fd, const drmModeRes* resources);
 };
 
 } // namespace EGL

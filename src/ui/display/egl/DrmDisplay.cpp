@@ -84,7 +84,7 @@ ChooseConnector(FileDescriptor dri_fd,
   throw std::runtime_error("No usable DRM connector found");
 }
 
-void findConnector(FileDescriptor dri_fd, const drmModeRes* resources)
+void DrmDisplay::findConnector(FileDescriptor dri_fd, const drmModeRes* resources)
 {
     drmModeConnector *connector = NULL;
     for (uint8_t i = 0; i < resources->count_connectors; i++) {
