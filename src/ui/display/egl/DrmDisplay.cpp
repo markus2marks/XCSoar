@@ -95,10 +95,11 @@ void DrmDisplay::findConnector(FileDescriptor dri_fd, const drmModeRes* resource
             this->m_count_connectors++;
 
         }
-        drmModeFreeConnector(connector);
-        connector = NULL;
+        else
+        {
+          drmModeFreeConnector(connector);
+        }
     }
-  return ChooseConnector(dri_fd, connectors);
 }
 
 DrmDisplay::DrmDisplay()
