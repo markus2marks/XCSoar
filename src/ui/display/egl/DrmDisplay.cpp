@@ -74,22 +74,32 @@ ChooseConnector(FileDescriptor dri_fd,
 {
   for (const auto id : connectors) {
     auto *connector = drmModeGetConnector(dri_fd.Get(), id);
-    if (connector != nullptr && connector->connection == DRM_MODE_CONNECTED &&
-        connector->count_modes > 0)
+    if (connector != nullptr && connector->connection == DRM_MODE_CONNECTED && connector->count_modes > 0)
+    {
+        connectors[]
       return connector;
-
+    }
     drmModeFreeConnector(connector);
   }
 
   throw std::runtime_error("No usable DRM connector found");
 }
 
-static drmModeConnector *
-ChooseConnector(FileDescriptor dri_fd, const drmModeRes &resources)
+void findConnector(FileDescriptor dri_fd, const drmModeRes &resources)
 {
-  const std::span connectors{
-    resources.connectors, std::size_t(resources.count_connectors),
-  };
+    drmModeConnector *connector = NULL;
+    for (uint8_t i = 0; i < resources->count_connectors; i++) {
+        connector = drmModeGetConnector(dri_fd.Get(), resources->connectors[i]);
+        if (connector->connection == DRM_MODE_CONNECTED)
+        {
+            this->m_connectors[this->m_count_connectors] = connector;
+            this->m_count_connectors++;
+
+        }
+        drmModeFreeConnector(connector);
+        connector = NULL;
+    }
+
 
   return ChooseConnector(dri_fd, connectors);
 }
@@ -101,7 +111,8 @@ DrmDisplay::DrmDisplay()
   if (resources == nullptr)
     throw MakeErrno("drmModeGetResources() failed");
 
-  auto *connector = ChooseConnector(dri_fd, *resources);
+  findConnector(dri_fd, *resources);
+  auto *connector = this->m_connectors[0];
   connector_id = connector->connector_id;
 
   if (auto *encoder = drmModeGetEncoder(dri_fd.Get(), connector->encoder_id)) {
