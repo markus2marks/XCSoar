@@ -76,7 +76,6 @@ ChooseConnector(FileDescriptor dri_fd,
     auto *connector = drmModeGetConnector(dri_fd.Get(), id);
     if (connector != nullptr && connector->connection == DRM_MODE_CONNECTED && connector->count_modes > 0)
     {
-        connectors[]
       return connector;
     }
     drmModeFreeConnector(connector);
@@ -99,8 +98,6 @@ void findConnector(FileDescriptor dri_fd, const drmModeRes &resources)
         drmModeFreeConnector(connector);
         connector = NULL;
     }
-
-
   return ChooseConnector(dri_fd, connectors);
 }
 
