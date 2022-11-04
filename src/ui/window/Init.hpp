@@ -27,7 +27,8 @@ Copyright_License {
 #include "ui/event/Queue.hpp"
 
 class ScreenGlobalInit {
-  UI::Display display;
+  UI::Display display(0);
+  UI::Display roundDisplay(1);
 
 #ifdef USE_POLL_EVENT
   UI::EventQueue event_queue{display};

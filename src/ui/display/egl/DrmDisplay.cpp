@@ -102,15 +102,14 @@ void DrmDisplay::findConnector(FileDescriptor dri_fd, const drmModeRes* resource
     }
 }
 
-DrmDisplay::DrmDisplay()
-  :dri_fd(OpenDriDevice())
+DrmDisplay::DrmDisplay(uint8_t connector) :dri_fd(OpenDriDevice())
 {
   drmModeRes *resources = drmModeGetResources(dri_fd.Get());
   if (resources == nullptr)
     throw MakeErrno("drmModeGetResources() failed");
 
   findConnector(dri_fd, resources);
-  auto *connector = this->m_connectors[1];
+  auto *connector = this->m_connectors[connector];
   connector_id = connector->connector_id;
 
   if (auto *encoder = drmModeGetEncoder(dri_fd.Get(), connector->encoder_id)) {

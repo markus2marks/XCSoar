@@ -102,8 +102,9 @@ class Display
   bool dirty = true;
 
 public:
-  Display()
-    :EGL::GbmDisplay(GetDriFD()),
+  Display(uint8_t connector)
+    :EGL::DrmDisplay(connector),
+     EGL::GbmDisplay(GetDriFD()),
      EGL::Display(GetGbmDevice()) {}
 
   void SetDirty() noexcept {
