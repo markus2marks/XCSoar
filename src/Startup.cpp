@@ -231,7 +231,7 @@ try {
  * @return True if bootup successful, False otherwise
  */
 bool
-Startup(UI::Display &display)
+Startup(UI::Display &display, UI::Display &roundDisplay)
 {
   VerboseOperationEnvironment operation;
   operation.SetProgressRange(1024);
@@ -256,6 +256,11 @@ Startup(UI::Display &display)
     new MainWindow(display);
   main_window->Create(SystemWindowSize(), style);
   if (!main_window->IsDefined())
+    return false;
+
+  MainWindow *const round_window = new MainWindow(roundDisplay);
+  round_window->Create(SystemWindowSize(), style);
+  if (!round_window->IsDefined())
     return false;
 
   LogFormat("Display dpi=%u,%u",
@@ -286,6 +291,8 @@ Startup(UI::Display &display)
 
   CommonInterface::SetUISettings().SetDefaults();
   main_window->Initialise();
+
+  round_window->Initialise();
 
 #ifdef SIMULATOR_AVAILABLE
   // prompt for simulator if not set by command line argument "-simulator" or "-fly"

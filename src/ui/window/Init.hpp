@@ -46,6 +46,13 @@ public:
     return display;
   }
 
+#ifdef MESA_KMS
+  auto &GetRoundDisplay() noexcept
+  {
+      return roundDisplay;
+  }
+#endif
+
   auto &GetEventQueue() noexcept {
     return event_queue;
   }
