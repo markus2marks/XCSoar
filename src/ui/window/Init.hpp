@@ -28,7 +28,7 @@ Copyright_License {
 
 class ScreenGlobalInit {
   UI::Display display;
-#ifdef defined(MESA_KMS)
+#ifdef MESA_KMS
   UI::Display roundDisplay;
 #endif
 
