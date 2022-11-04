@@ -41,7 +41,7 @@ class DrmDisplay {
 
   PixelSize size_mm;
 
-  drmModeConnector m_connectors[2];
+  drmModeConnector* m_connectors[2];
   uint8_t m_count_connectors = 0;
 public:
   /**
