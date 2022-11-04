@@ -48,6 +48,8 @@ Copyright_License {
 ScreenGlobalInit::ScreenGlobalInit()
 #ifdef ANDROID
   :display(EGL_DEFAULT_DISPLAY)
+#elif defined(MESA_KMS)
+  :display(0), roundDisplay(1)
 #endif
 {
 #ifdef USE_FREETYPE

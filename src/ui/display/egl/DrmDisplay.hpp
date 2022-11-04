@@ -47,7 +47,7 @@ public:
   /**
    * Throws on error.
    */
-  DrmDisplay(uint8_t connector);
+  DrmDisplay(uint8_t connectorPort);
 
   ~DrmDisplay() noexcept;
 

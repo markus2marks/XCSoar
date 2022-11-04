@@ -27,8 +27,10 @@ Copyright_License {
 #include "ui/event/Queue.hpp"
 
 class ScreenGlobalInit {
-  UI::Display display(0);
-  UI::Display roundDisplay(1);
+  UI::Display display;
+#ifdef defined(MESA_KMS)
+  UI::Display roundDisplay;
+#endif
 
 #ifdef USE_POLL_EVENT
   UI::EventQueue event_queue{display};

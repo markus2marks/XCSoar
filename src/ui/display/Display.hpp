@@ -102,8 +102,8 @@ class Display
   bool dirty = true;
 
 public:
-  Display(uint8_t connector)
-    :EGL::DrmDisplay(connector),
+  Display(uint8_t connectorPort)
+    :EGL::DrmDisplay(connectorPort),
      EGL::GbmDisplay(GetDriFD()),
      EGL::Display(GetGbmDevice()) {}
 
