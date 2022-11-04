@@ -41,6 +41,7 @@ Copyright_License {
 #include "Device/Driver/LX.hpp"
 #include "Device/Driver/IMI.hpp"
 #include "Device/Driver/Zander.hpp"
+#include "Device/Driver/FlyberrySensorbox.hpp"
 #include "Device/Driver/FlymasterF1.hpp"
 #include "Device/Driver/XCOM760.hpp"
 #include "Device/Driver/Condor.hpp"
@@ -81,6 +82,7 @@ static const struct DeviceRegister *const driver_list[] = {
   &ew_microrecorder_driver,
   &lx_driver,
   &zander_driver,
+  &flyberrysensorbox_driver,
   &flymaster_f1_driver,
   &xcom760_driver,
   &condor_driver,

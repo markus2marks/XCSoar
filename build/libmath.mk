@@ -16,6 +16,9 @@ MATH_SOURCES = \
 	$(MATH_SRC_DIR)/SelfTimingKalmanFilter1d.cpp \
 	$(MATH_SRC_DIR)/XYDataStore.cpp \
 	$(MATH_SRC_DIR)/ConvexFilter.cpp \
-	$(MATH_SRC_DIR)/Histogram.cpp
+	$(MATH_SRC_DIR)/Histogram.cpp \
+	$(MATH_SRC_DIR)/Variometer/algebra.cpp \
+	$(MATH_SRC_DIR)/Variometer/altitude.cpp \
+	$(MATH_SRC_DIR)/Variometer/filters.cpp
 
 $(eval $(call link-library,math,MATH))
