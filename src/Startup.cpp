@@ -224,14 +224,14 @@ try {
 } catch (...) {
   LogError(std::current_exception(), "LoadTerrain failed");
 }
-UI::Display d;
+
 /**
  * "Boots" up XCSoar
  * @param lpCmdLine Command line string
  * @return True if bootup successful, False otherwise
  */
 bool
-Startup(UI::Display &display)
+Startup(UI::Display &display, UI::Display &roundDisplay)
 {
   VerboseOperationEnvironment operation;
   operation.SetProgressRange(1024);
@@ -257,12 +257,12 @@ Startup(UI::Display &display)
   main_window->Create(SystemWindowSize(), style);
   if (!main_window->IsDefined())
     return false;
-//  PixelSize p(480,480);
-//
-//  MainWindow *const round_window = new MainWindow(roundDisplay);
-//  round_window->Create(p, style);
-//  if (!round_window->IsDefined())
-//    return false;
+
+  PixelSize p(480,480);
+
+  TopWindow *const round_window = new TopWindow(roundDisplay);
+   round_window->Create("teest", p);
+
 
   LogFormat("Display dpi=%u,%u",
             Display::GetDPI(display).x, Display::GetDPI(display).y);
@@ -293,7 +293,7 @@ Startup(UI::Display &display)
   CommonInterface::SetUISettings().SetDefaults();
   main_window->Initialise();
 
-//  round_window->Initialise();
+  round_window->Initialise();
 
 #ifdef SIMULATOR_AVAILABLE
   // prompt for simulator if not set by command line argument "-simulator" or "-fly"
