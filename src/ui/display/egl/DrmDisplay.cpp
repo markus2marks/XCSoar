@@ -68,21 +68,21 @@ OpenDriDevice()
   }
 }
 
-static drmModeConnector *
-ChooseConnector(FileDescriptor dri_fd,
-                const std::span<const uint32_t> connectors)
-{
-  for (const auto id : connectors) {
-    auto *connector = drmModeGetConnector(dri_fd.Get(), id);
-    if (connector != nullptr && connector->connection == DRM_MODE_CONNECTED && connector->count_modes > 0)
-    {
-      return connector;
-    }
-    drmModeFreeConnector(connector);
-  }
-
-  throw std::runtime_error("No usable DRM connector found");
-}
+//static drmModeConnector *
+//ChooseConnector(FileDescriptor dri_fd,
+//                const std::span<const uint32_t> connectors)
+//{
+//  for (const auto id : connectors) {
+//    auto *connector = drmModeGetConnector(dri_fd.Get(), id);
+//    if (connector != nullptr && connector->connection == DRM_MODE_CONNECTED && connector->count_modes > 0)
+//    {
+//      return connector;
+//    }
+//    drmModeFreeConnector(connector);
+//  }
+//
+//  throw std::runtime_error("No usable DRM connector found");
+//}
 
 void DrmDisplay::findConnector(FileDescriptor dri_fd, const drmModeRes* resources)
 {
