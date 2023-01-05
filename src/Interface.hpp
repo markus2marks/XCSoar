@@ -25,10 +25,11 @@ Copyright_License {
 
 #include "Blackboard/InterfaceBlackboard.hpp"
 #include "thread/Debug.hpp"
+#include "ui/window/SingleWindow.hpp"
 
 struct UIState;
 class MainWindow;
-
+class RoundDisplay;
 /** 
  * Class to hold data/methods accessible by all interface subsystems
  */
@@ -48,6 +49,7 @@ extern bool movement_detected;
 
 // window.. make this protected TODO so have to subclass to get access
 extern MainWindow *main_window;
+extern RoundDisplay *round_window;
 
 static inline bool
 MovementDetected() noexcept

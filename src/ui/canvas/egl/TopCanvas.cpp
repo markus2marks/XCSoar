@@ -57,11 +57,7 @@ TopCanvas::TopCanvas(UI::Display &_display)
 
 TopCanvas::TopCanvas(UI::Display &_display)
   :display(_display),
-   gbm_surface(display.GetGbmDevice(),
-               display.GetMode().hdisplay,
-               display.GetMode().vdisplay,
-               XCSOAR_GBM_FORMAT,
-               GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING)
+   gbm_surface(display.GetGbmDevice(), display.GetMode().hdisplay, display.GetMode().vdisplay, XCSOAR_GBM_FORMAT, GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING)
 {
   evctx = { 0 };
   evctx.version = DRM_EVENT_CONTEXT_VERSION;
@@ -71,6 +67,8 @@ TopCanvas::TopCanvas(UI::Display &_display)
                                [[maybe_unused]] unsigned int usec, void *flip_finishedPtr) {
     *reinterpret_cast<bool*>(flip_finishedPtr) = true;
   };
+  printf("x: %i y: %i\n\r", display.GetMode().hdisplay, display.GetMode().vdisplay);
+  printf("crtc id: %i\n\r", display.ModeGetCrtc()->crtc_id);
 
   CreateSurface(gbm_surface);
 }
@@ -80,14 +78,14 @@ TopCanvas::TopCanvas(UI::Display &_display)
 void
 TopCanvas::CreateSurface(EGLNativeWindowType native_window)
 {
-  surface = display.CreateWindowSurface(native_window);
+
+    surface = display.CreateWindowSurface(native_window);
 
   const PixelSize effective_size = GetNativeSize();
   if (effective_size.width == 0 || effective_size.height == 0)
     throw std::runtime_error("eglQuerySurface() failed");
 
   display.MakeCurrent(surface);
-
   SetupViewport(effective_size);
 }
 
@@ -148,61 +146,73 @@ TopCanvas::ReleaseSurface() noexcept
   surface = EGL_NO_SURFACE;
 }
 
-void
-TopCanvas::Flip()
+void TopCanvas::setFocus()
 {
-  if (!display.SwapBuffers(surface)) {
-#ifdef ANDROID
-    LogFormat("eglSwapBuffers() failed: 0x%x", eglGetError());
-#else
-    fprintf(stderr, "eglSwapBuffers() failed: 0x%x\n", eglGetError());
-    exit(EXIT_FAILURE);
-#endif
-  }
+    display.MakeCurrent(surface);
+    PixelSize effective_size = GetNativeSize();
+    SetupViewport(effective_size);
+}
 
-#ifdef MESA_KMS
-  const FileDescriptor dri_fd = display.GetDriFD();
-
-  gbm_bo *new_bo = gbm_surface_lock_front_buffer(gbm_surface);
-
-  auto *fb = (EGL::DrmFrameBuffer *)gbm_bo_get_user_data(new_bo);
-  if (!fb) {
-    fb = new EGL::DrmFrameBuffer(dri_fd, gbm_bo_get_width(new_bo),
-                                 gbm_bo_get_height(new_bo), 24, 32,
-                                 gbm_bo_get_stride(new_bo),
-                                 gbm_bo_get_handle(new_bo).u32);
-
-    gbm_bo_set_user_data(new_bo, fb, []([[maybe_unused]] struct gbm_bo *bo,
-                                        void *data) {
-      auto *fb = (EGL::DrmFrameBuffer *)data;
-      delete fb;
-    });
-  }
-
-  if (nullptr == current_bo) {
-    saved_crtc = display.ModeGetCrtc();
-    display.ModeSetCrtc(fb->GetId(), 0, 0);
-  } else {
+void TopCanvas::Flip()
+{
 
     bool flip_finished = false;
-    int page_flip_ret = display.ModePageFlip(fb->GetId(),
-                                             DRM_MODE_PAGE_FLIP_EVENT,
-                                             &flip_finished);
-    if (0 != page_flip_ret) {
-      fprintf(stderr, "drmModePageFlip() failed: %d\n", page_flip_ret);
-      exit(EXIT_FAILURE);
-    }
-    while (!flip_finished) {
-      int handle_event_ret = drmHandleEvent(dri_fd.Get(), &evctx);
-      if (0 != handle_event_ret) {
-        fprintf(stderr, "drmHandleEvent() failed: %d\n", handle_event_ret);
+    int page_flip_ret = 0;
+    const FileDescriptor dri_fd = display.GetDriFD();
+
+    display.SetMaster();
+
+      if (!display.SwapBuffers(surface)) {
+    #ifdef ANDROID
+        LogFormat("eglSwapBuffers() failed: 0x%x", eglGetError());
+    #else
+        fprintf(stderr, "eglSwapBuffers() failed: 0x%x\n", eglGetError());
         exit(EXIT_FAILURE);
+    #endif
       }
-    }
 
+
+      gbm_bo *new_bo = gbm_surface_lock_front_buffer(gbm_surface);
+
+      auto *fb = (EGL::DrmFrameBuffer *)gbm_bo_get_user_data(new_bo);
+      if (!fb) {
+        fb = new EGL::DrmFrameBuffer(dri_fd, gbm_bo_get_width(new_bo),
+                                     gbm_bo_get_height(new_bo), 24, 32,
+                                     gbm_bo_get_stride(new_bo),
+                                     gbm_bo_get_handle(new_bo).u32);
+
+
+        gbm_bo_set_user_data(new_bo, fb, []([[maybe_unused]] struct gbm_bo *bo,
+                                            void *data) {
+          auto *fb = (EGL::DrmFrameBuffer *)data;
+          delete fb;
+        });
+        printf("fb id: %i \n\r", fb->GetId());
+        display.ModeSetCrtc(fb->GetId(), 0, 0);
+      }
+      saved_crtc = display.ModeGetCrtc();
+      printf("        id: %i \n\r", fb->GetId());
+      printf("        crtc id: %i \n\r", saved_crtc->crtc_id);
+      printf("        display: %p \n\r", (uint8_t*) &display);
+
+      if(current_bo != nullptr)
+      {
+        page_flip_ret = display.ModePageFlip(fb->GetId(), DRM_MODE_PAGE_FLIP_EVENT, &flip_finished);
+        if (0 != page_flip_ret) {
+          fprintf(stderr, "drmModePageFlip() failed: %d\n", page_flip_ret);
+          exit(EXIT_FAILURE);
+        }
+        while (!flip_finished) {
+          int handle_event_ret = drmHandleEvent(dri_fd.Get(), &evctx);
+          printf("Flip finished\n\r");
+
+          if (0 != handle_event_ret) {
+            fprintf(stderr, "drmHandleEvent() failed: %d\n", handle_event_ret);
+            exit(EXIT_FAILURE);
+          }
+        }
+      }
     gbm_surface_release_buffer(gbm_surface, current_bo);
-  }
-
-  current_bo = new_bo;
-#endif
+    current_bo = new_bo;
+    display.DropMaster();
 }

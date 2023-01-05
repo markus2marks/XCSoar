@@ -85,6 +85,8 @@ class TopCanvas
 #ifdef MESA_KMS
   const EGL::GbmSurface gbm_surface;
 
+
+
   drmEventContext evctx;
 
   struct gbm_bo *current_bo = nullptr;
@@ -185,6 +187,7 @@ public:
    */
   [[gnu::pure]]
   PixelSize GetNativeSize() const noexcept;
+  PixelSize GetNativeSize1() const noexcept;
 #endif
 
 #if defined(USE_MEMORY_CANVAS) || defined(ENABLE_OPENGL)
@@ -248,6 +251,7 @@ public:
 
   void Flip();
 
+  void setFocus();
 #ifdef KOBO
   /**
    * Wait until the screen update is complete.

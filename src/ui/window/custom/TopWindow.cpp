@@ -140,6 +140,7 @@ TopWindow::DrawMouseCursor(Canvas &canvas) noexcept
 void
 TopWindow::Expose() noexcept
 {
+    screen->setFocus();
 #ifdef HAVE_CPU_FREQUENCY
   const ScopeLockCPU cpu;
 #endif
@@ -148,13 +149,21 @@ TopWindow::Expose() noexcept
     OnPaint(canvas);
 
 #ifdef DRAW_MOUSE_CURSOR
-    DrawMouseCursor(canvas);
+    if(round_display !=  nullptr)
+    {
+        DrawMouseCursor(canvas);
+    }
 #endif
 
     screen->Unlock();
   }
 
   screen->Flip();
+
+    if(round_display != nullptr)
+    {
+      round_display->Expose();
+    }
 }
 
 void
@@ -221,6 +230,11 @@ void
 TopWindow::PostQuit() noexcept
 {
   event_queue->Quit();
+}
+
+void TopWindow::addRoundDisplay(TopWindow *round_window)
+{
+    this->round_display = round_window;
 }
 
 } // namespace UI

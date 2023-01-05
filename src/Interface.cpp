@@ -31,3 +31,4 @@ bool CommonInterface::Private::movement_detected = false;
 InterfaceBlackboard CommonInterface::Private::blackboard;
 
 MainWindow *CommonInterface::main_window;
+RoundDisplay *CommonInterface::round_window;

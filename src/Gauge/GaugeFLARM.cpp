@@ -65,7 +65,7 @@ SmallTrafficWindow::SmallTrafficWindow(ContainerWindow &parent,
                                        const PixelRect &rc,
                                        const FlarmTrafficLook &look,
                                        const WindowStyle style) noexcept
-  :FlarmTrafficWindow(look, 1, 1, true),
+  :FlarmTrafficWindow(look, 0, 0, false),
    dragging(false), pressed(false)
 {
   Create(parent, rc, style);

@@ -47,7 +47,9 @@ Copyright_License {
 #include "io/async/GlobalAsioThread.hpp"
 #include "io/async/AsioThread.hpp"
 #include "util/PrintException.hxx"
-
+#include "ui/event/poll/Loop.hpp"
+#include "ui/event/poll/Queue.hpp"
+#include "ui/event/shared/Event.hpp"
 #ifdef ENABLE_SDL
 /* this is necessary on Mac OS X, to let libSDL bootstrap Quartz
    before entering our main() */
@@ -88,7 +90,27 @@ static const char *const Usage = "\n"
   "  -console        open debug output console\n"
 #endif
   ;
+int DualMonitorRunEventLoop() noexcept;
 
+int DualMonitorRunEventLoop() noexcept
+{
+//    CommonInterface::round_window->Refresh();
+    CommonInterface::main_window->RunEventLoop();
+
+//  UI::EventQueue q2(screen_init.GetDisplay());
+//  UI::EventQueue q1(screen_init.GetRoundDisplay());
+//  UI::EventLoop loop1 (q1, *CommonInterface::round_window);
+//  UI::EventLoop loop2 (q2, *CommonInterface::main_window);
+//  UI::Event event1;
+//  UI::Event event2;
+//  while (loop1.Get(event1) /*&& loop2.Get(event2)*/)
+//  {
+//    loop1.Dispatch(event1);
+//    loop2.Dispatch(event2);
+//  }
+
+  return 0;
+}
 static int
 Main()
 {
@@ -117,7 +139,11 @@ Main()
   // Perform application initialization and run loop
   int ret = EXIT_FAILURE;
   if (Startup(screen_init.GetDisplay(), screen_init.GetRoundDisplay()))
-    ret = CommonInterface::main_window->RunEventLoop();
+  {
+      CommonInterface::main_window->addRoundDisplay((UI::TopWindow*)CommonInterface::round_window);
+      ret = DualMonitorRunEventLoop(    );
+  }
+
 
   Shutdown();
 

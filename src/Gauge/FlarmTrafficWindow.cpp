@@ -71,7 +71,7 @@ FlarmTrafficWindow::OnResize(PixelSize new_size) noexcept
   PaintWindow::OnResize(new_size);
 
   const unsigned half_width = new_size.width / 2;
-  const unsigned half_height = new_size.height / 2;
+  const unsigned half_height = (new_size.height / 2) + 3;
 
   // Calculate Radar size
   radius = std::min(half_width - h_padding, half_height - v_padding);
@@ -679,11 +679,11 @@ FlarmTrafficWindow::PaintRadarBackground(Canvas &canvas) const noexcept
   TCHAR distance_string[10];
   FormatUserDistanceSmart(distance, distance_string,
                           ARRAY_SIZE(distance_string), 1000);
-  DrawCircleLabel(canvas, radar_mid + PixelSize{0u, radius}, distance_string);
+  DrawCircleLabel(canvas, radar_mid + PixelSize{10u, radius}, distance_string);
 
   FormatUserDistanceSmart(distance / 2, distance_string,
                           ARRAY_SIZE(distance_string), 1000);
-  DrawCircleLabel(canvas, radar_mid + PixelSize{0u, radius / 2},
+  DrawCircleLabel(canvas, radar_mid + PixelSize{10u, radius / 2},
                   distance_string);
 
   canvas.SetBackgroundTransparent();

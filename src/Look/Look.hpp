@@ -58,6 +58,7 @@ struct Look {
   HorizonLook horizon;
   TrafficLook traffic;
   FlarmTrafficLook flarm_gauge;
+  FlarmTrafficLook flarm_gauge_round_display;
   FlarmTrafficLook flarm_dialog;
   InfoBoxLook info_box;
   WindArrowLook wind_arrow_info_box;

@@ -127,11 +127,34 @@ DrmDisplay::DrmDisplay(uint8_t connectorPort) :dri_fd(OpenDriDevice())
 
 DrmDisplay::~DrmDisplay() noexcept = default;
 
+//void DrmDisplay::switchConnector(uint8_t connectorPort)
+//{
+//    drmModeRes *resources = drmModeGetResources(dri_fd.Get());
+//    if (resources == nullptr)
+//      throw MakeErrno("drmModeGetResources() failed");
+//
+//    auto *connector = this->m_connectors[connectorPort];
+//    connector_id = connector->connector_id;
+//
+//    if (auto *encoder = drmModeGetEncoder(dri_fd.Get(), connector->encoder_id)) {
+//      crtc_id = encoder->crtc_id;
+//      drmModeFreeEncoder(encoder);
+//    } else
+//      throw std::runtime_error("No usable DRM encoder found");
+//
+//    mode = connector->modes[0];
+//
+//    size_mm = {connector->mmWidth, connector->mmHeight};
+//
+//    drmModeFreeConnector(connector);
+//}
+
 void
 DrmDisplay::SetMaster()
 {
-  if (drmSetMaster(dri_fd.Get()) != 0)
-    throw MakeErrno("DRM_IOCTL_SET_MASTER failed");
+//  if (drmSetMaster(dri_fd.Get()) != 0)
+//    throw MakeErrno("DRM_IOCTL_SET_MASTER failed");
+    drmSetMaster(dri_fd.Get());
 }
 
 void

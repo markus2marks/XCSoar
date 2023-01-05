@@ -146,6 +146,8 @@ public:
  */
 class TopWindow : public ContainerWindow {
   UI::Display &display;
+  TopWindow *round_display = reinterpret_cast<TopWindow*>(NULL);
+
 
 #ifdef USE_X11
   X11Window x_window;
@@ -456,6 +458,10 @@ public:
    * Runs the event loop until the application quits.
    */
   int RunEventLoop() noexcept;
+
+  void addRoundDisplay(TopWindow *round_window);
 };
+
+
 
 } // namespace UI
