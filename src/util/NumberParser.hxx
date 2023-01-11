@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2022 Max Kellermann <max.kellermann@gmail.com>
+ * Copyright 2022 Max Kellermann <max.kellermann@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,34 +29,30 @@
 
 #pragma once
 
-#include <cstddef>
+#include <charconv>
+#include <optional>
 #include <string_view>
+#include <type_traits> // for std::is_integral_v
 
-#include <wchar.h>
+template<typename T>
+requires std::is_integral_v<T>
+[[gnu::pure]]
+std::optional<T>
+ParseInteger(const char *first, const char *last, int base=10) noexcept
+{
+	T value;
+	auto [ptr, ec] = std::from_chars(first, last, value, base);
+	if (ptr == last && ec == std::errc{})
+		return value;
+	else
+		return std::nullopt;
+}
 
-[[gnu::nonnull]]
-void
-CopyASCII(wchar_t *dest, const wchar_t *src) noexcept;
-
-[[gnu::nonnull]]
-wchar_t *
-CopyASCII(wchar_t *dest, std::size_t dest_size,
-	  std::wstring_view src) noexcept;
-
-[[gnu::nonnull]]
-void
-CopyASCII(wchar_t *dest, const char *src) noexcept;
-
-[[gnu::nonnull]]
-wchar_t *
-CopyASCII(wchar_t *dest, std::size_t dest_size,
-	  std::string_view src) noexcept;
-
-[[gnu::nonnull]]
-char *
-CopyASCII(char *dest, std::size_t dest_size,
-	  std::wstring_view src) noexcept;
-
-[[gnu::nonnull]]
-void
-CopyASCIIUpper(char *dest, const wchar_t *src) noexcept;
+template<typename T>
+requires std::is_integral_v<T>
+[[gnu::pure]]
+std::optional<T>
+ParseInteger(std::string_view src, int base=10) noexcept
+{
+	return ParseInteger<T>(src.data(), src.data() + src.size(), base);
+}
