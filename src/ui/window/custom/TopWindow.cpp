@@ -140,7 +140,9 @@ TopWindow::DrawMouseCursor(Canvas &canvas) noexcept
 void
 TopWindow::Expose() noexcept
 {
+#ifdef MESA_KMS
     screen->setFocus();
+#endif
 #ifdef HAVE_CPU_FREQUENCY
   const ScopeLockCPU cpu;
 #endif
@@ -159,11 +161,12 @@ TopWindow::Expose() noexcept
   }
 
   screen->Flip();
-
+#ifdef MESA_KMS
     if(round_display != nullptr)
     {
       round_display->Expose();
     }
+#endif
 }
 
 void

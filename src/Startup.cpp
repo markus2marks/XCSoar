@@ -232,7 +232,11 @@ try {
  * @return True if bootup successful, False otherwise
  */
 bool
+#ifdef MESA_KMS
 Startup(UI::Display &display, UI::Display &roundDisplay)
+#else
+Startup(UI::Display &display)
+#endif
 {
   VerboseOperationEnvironment operation;
   operation.SetProgressRange(1024);
@@ -252,12 +256,12 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
 #ifdef SOFTWARE_ROTATE_DISPLAY
   style.InitialOrientation(Display::DetectInitialOrientation());
 #endif
-
+#ifdef MESA_KMS
   PixelSize p(480,480);
 
   RoundDisplay *round_window = CommonInterface::round_window = new RoundDisplay(roundDisplay);
   round_window->Create(p);
-
+#endif
   MainWindow *const main_window = CommonInterface::main_window =
     new MainWindow(display);
   main_window->Create(SystemWindowSize(), style);
@@ -295,9 +299,9 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
 
   CommonInterface::SetUISettings().SetDefaults();
   main_window->Initialise();
-
+#ifdef MESA_KMS
   round_window->Initialise();
-
+#endif
 #ifdef SIMULATOR_AVAILABLE
   // prompt for simulator if not set by command line argument "-simulator" or "-fly"
   if (!sim_set_in_cmd_line_flag) {
@@ -571,7 +575,9 @@ Startup(UI::Display &display, UI::Display &roundDisplay)
   operation.Hide();
 
   main_window->FinishStartup();
+#ifdef MESA_KMS
   round_window->FinishStartup();
+#endif
   return true;
 }
 
