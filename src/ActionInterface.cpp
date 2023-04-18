@@ -1,25 +1,5 @@
-/*
-Copyright_License {
-
-  XCSoar Glide Computer - http://www.xcsoar.org/
-  Copyright (C) 2000-2022 The XCSoar Project
-  A detailed list of copyright holders can be found in the file "AUTHORS".
-
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-}
-*/
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright The XCSoar Project
 
 #include "ActionInterface.hpp"
 #include "Interface.hpp"
@@ -300,6 +280,8 @@ ActionInterface::SetActiveFrequency(const RadioFrequency freq,
                                     const TCHAR *freq_name,
                                     bool to_devices) noexcept
 {
+  assert(freq.IsDefined());
+
   /* update interface settings */
 
   SetComputerSettings().radio.active_frequency = freq;
@@ -327,6 +309,8 @@ ActionInterface::SetStandbyFrequency(const RadioFrequency freq,
                                      const TCHAR *freq_name,
                                      bool to_devices) noexcept
 {
+  assert(freq.IsDefined());
+
   /* update interface settings */
 
   SetComputerSettings().radio.standby_frequency = freq;
@@ -380,9 +364,30 @@ ActionInterface::ExchangeRadioFrequencies(bool to_devices) noexcept
 {
   const auto radio_settings = SetComputerSettings().radio;
 
-  const auto old_active_freq = radio_settings.active_frequency;
-  const auto old_active_freq_name = radio_settings.active_name;
+  if(radio_settings.active_frequency.IsDefined() &&
+     radio_settings.standby_frequency.IsDefined()) {
+    const auto old_active_freq = radio_settings.active_frequency;
+    const auto old_active_freq_name = radio_settings.active_name;
 
-  ActionInterface::SetActiveFrequency(radio_settings.standby_frequency, radio_settings.standby_name, to_devices);
-  ActionInterface::SetStandbyFrequency(old_active_freq, old_active_freq_name, to_devices);
+    ActionInterface::SetActiveFrequency(radio_settings.standby_frequency, radio_settings.standby_name, to_devices);
+    ActionInterface::SetStandbyFrequency(old_active_freq, old_active_freq_name, to_devices);
+  }
+}
+
+void
+ActionInterface::SetTransponderCode(TransponderCode code, bool to_devices) noexcept
+{
+  assert(code.IsDefined());
+
+  /* update interface settings */
+  SetComputerSettings().transponder.transponder_code = code;
+
+  /* update InfoBoxes (that might show the code setting) */
+  InfoBoxManager::SetDirty();
+
+  /* send to external devices */
+  if (to_devices) {
+    MessageOperationEnvironment env;
+    devices->PutTransponderCode(code, env);
+  }
 }

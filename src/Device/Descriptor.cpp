@@ -1,25 +1,5 @@
-/*
-Copyright_License {
-
-  XCSoar Glide Computer - http://www.xcsoar.org/
-  Copyright (C) 2000-2021 The XCSoar Project
-  A detailed list of copyright holders can be found in the file "AUTHORS".
-
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-}
-*/
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright The XCSoar Project
 
 #include "Descriptor.hpp"
 #include "DataEditor.hpp"
@@ -1010,6 +990,7 @@ DeviceDescriptor::PutActiveFrequency(RadioFrequency frequency,
                                      OperationEnvironment &env) noexcept
 {
   assert(InMainThread());
+  assert(frequency.IsDefined());
 
   if (device == nullptr || !config.sync_to_device)
     return true;
@@ -1035,6 +1016,7 @@ DeviceDescriptor::PutStandbyFrequency(RadioFrequency frequency,
                                       OperationEnvironment &env) noexcept
 {
   assert(InMainThread());
+  assert(frequency.IsDefined());
 
   if (device == nullptr || !config.sync_to_device)
     return true;
@@ -1050,6 +1032,31 @@ DeviceDescriptor::PutStandbyFrequency(RadioFrequency frequency,
     return false;
   } catch (...) {
     LogError(std::current_exception(), "PutStandbyFrequency() failed");
+    return false;
+  }
+}
+
+bool
+DeviceDescriptor::PutTransponderCode(TransponderCode code,
+                                     OperationEnvironment &env) noexcept
+{
+  assert(InMainThread());
+  assert(code.IsDefined());
+
+  if (device == nullptr || !config.sync_to_device)
+    return true;
+
+  if (!Borrow())
+    /* TODO: postpone until the borrowed device has been returned */
+    return false;
+
+  try {
+    ScopeReturnDevice restore(*this, env);
+    return device->PutTransponderCode(code, env);
+  } catch (OperationCancelled) {
+    return false;
+  } catch (...) {
+    LogError(std::current_exception(), "PutTransponderCode() failed");
     return false;
   }
 }

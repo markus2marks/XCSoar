@@ -1,24 +1,5 @@
-/* Copyright_License {
-
-  XCSoar Glide Computer - http://www.xcsoar.org/
-  Copyright (C) 2000-2022 The XCSoar Project
-  A detailed list of copyright holders can be found in the file "AUTHORS".
-
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-}
-*/
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright The XCSoar Project
 
 #include "Device/Driver/Generic.hpp"
 #include "Device/Driver/AltairPro.hpp"
@@ -1513,8 +1494,17 @@ TestACD()
   nmea_info.Reset();
   nmea_info.clock = TimeStamp{FloatDuration{1}};
 
-  /* $PAAVS responses from XPDR must be ignored */
-  ok1(!device->ParseNMEA("$PAAVS,XPDR,7000,1,0,1697,0,0*68",nmea_info));
+  /* test XPDR response */
+  ok1(device->ParseNMEA("$PAAVS,XPDR,7000,1,0,1697,0,0*68",nmea_info));
+  ok1(nmea_info.settings.has_transponder_code);
+  ok1(equals(nmea_info.settings.transponder_code.GetCode(), 
+             TransponderCode{07000}.GetCode()));
+
+  nmea_info.Reset();
+  nmea_info.clock = TimeStamp{FloatDuration{1}};
+
+  ok1(!(device->ParseNMEA("$PAAVS,XPDR,9999,1,0,1697,0,0*6F",nmea_info)));
+  ok1(!(nmea_info.settings.transponder_code.IsDefined()));
 
   nmea_info.Reset();
   nmea_info.clock = TimeStamp{FloatDuration{1}};
@@ -1631,7 +1621,7 @@ TestFlightList(const struct DeviceRegister &driver)
 
 int main()
 {
-  plan_tests(839);
+  plan_tests(843);
 
   TestGeneric();
   TestTasman();

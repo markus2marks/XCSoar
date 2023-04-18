@@ -1,38 +1,11 @@
-/*
- * Copyright 2020-2021 CM4all GmbH
- * All rights reserved.
- *
- * author: Max Kellermann <mk@cm4all.com>
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * - Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- *
- * - Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the
- * distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE
- * FOUNDATION OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+// SPDX-License-Identifier: BSD-2-Clause
+// Copyright CM4all GmbH
+// author: Max Kellermann <mk@cm4all.com>
 
 #pragma once
 
 #include "Cast.hxx"
+#include "Concepts.hxx"
 #include "MemberPointer.hxx"
 #include "OptionalCounter.hxx"
 #include "ShallowCopy.hxx"
@@ -42,7 +15,7 @@
 #include <utility>
 
 struct IntrusiveForwardListNode {
-	IntrusiveForwardListNode *next = nullptr;
+	IntrusiveForwardListNode *next;
 };
 
 struct IntrusiveForwardListHook {
@@ -122,7 +95,7 @@ template<typename T,
 	 typename HookTraits=IntrusiveForwardListBaseHookTraits<T>,
 	 bool constant_time_size=false>
 class IntrusiveForwardList {
-	IntrusiveForwardListNode head;
+	IntrusiveForwardListNode head{nullptr};
 
 	[[no_unique_address]]
 	OptionalCounter<constant_time_size> counter;
@@ -152,6 +125,11 @@ class IntrusiveForwardList {
 	}
 
 public:
+	using value_type = T;
+	using reference = T &;
+	using const_reference = const T &;
+	using pointer = T *;
+	using const_pointer = const T *;
 	using size_type = std::size_t;
 
 	IntrusiveForwardList() = default;
@@ -193,8 +171,7 @@ public:
 		counter.reset();
 	}
 
-	template<typename D>
-	void clear_and_dispose(D &&disposer) noexcept {
+	void clear_and_dispose(Disposer<value_type> auto disposer) noexcept {
 		while (!empty()) {
 			auto *item = &front();
 			pop_front();
@@ -202,11 +179,11 @@ public:
 		}
 	}
 
-	const T &front() const noexcept {
+	const_reference front() const noexcept {
 		return *Cast(head.next);
 	}
 
-	T &front() noexcept {
+	reference front() noexcept {
 		return *Cast(head.next);
 	}
 
@@ -243,11 +220,11 @@ public:
 			return !(*this == other);
 		}
 
-		constexpr T &operator*() const noexcept {
+		constexpr reference operator*() const noexcept {
 			return *Cast(cursor);
 		}
 
-		constexpr T *operator->() const noexcept {
+		constexpr pointer operator->() const noexcept {
 			return Cast(cursor);
 		}
 
@@ -297,11 +274,11 @@ public:
 			return !(*this == other);
 		}
 
-		constexpr const T &operator*() const noexcept {
+		constexpr reference operator*() const noexcept {
 			return *Cast(cursor);
 		}
 
-		constexpr const T *operator->() const noexcept {
+		constexpr pointer operator->() const noexcept {
 			return Cast(cursor);
 		}
 
@@ -315,14 +292,14 @@ public:
 		return {head.next};
 	}
 
-	void push_front(T &t) noexcept {
+	void push_front(reference t) noexcept {
 		auto &new_node = ToNode(t);
 		new_node.next = head.next;
 		head.next = &new_node;
 		++counter;
 	}
 
-	static iterator insert_after(iterator pos, T &t) noexcept {
+	static iterator insert_after(iterator pos, reference t) noexcept {
 		// no counter update in this static method
 		static_assert(!constant_time_size);
 
