@@ -398,6 +398,7 @@ Main()
 
   UI::SingleWindow main_window{screen_init.GetDisplay()};
   main_window.Create(_T("XCSoar/KoboMenu"), {600, 800}, main_style);
+  main_style.InitialOrientation(DisplayOrientation::REVERSE_PORTRAIT);
   main_window.Show();
 
   global_dialog_look = &dialog_look;
