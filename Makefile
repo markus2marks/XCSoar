@@ -255,6 +255,8 @@ else
 everything: all
 endif
 
+menu: $(OV_MENU_OUTPUTS)
+
 clean:
 	@$(NQ)echo "cleaning all"
 	$(Q)rm -rf build/local-config.mk

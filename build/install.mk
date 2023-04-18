@@ -16,6 +16,11 @@ install-bin: all
 install-manual: manual
 	install -d -m 0755 $(prefix)/share/doc/xcsoar
 	install -m 0644 $(MANUAL_PDF) $(prefix)/share/doc/xcsoar
+	
+install-menu: menu
+	install -d -m 0755 $(prefix)/bin
+	install -m 0755 $(TARGET_BIN_DIR)/OpenVarioMenu $(prefix)/bin
+
 
 install: install-bin install-mo install-manual
 

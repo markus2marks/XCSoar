@@ -34,5 +34,5 @@ OV_MENU_STRIP = y
 $(eval $(call link-program,OpenVarioMenu,OV_MENU))
 
 ifeq ($(TARGET),UNIX)
-OPTIONAL_OUTPUTS += $(OV_MENU_BIN)
+OV_MENU_OUTPUTS += $(OV_MENU_BIN)
 endif

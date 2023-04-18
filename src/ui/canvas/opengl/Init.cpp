@@ -206,7 +206,7 @@ OpenGL::SetupViewport(UnsignedPoint2D size) noexcept
   window_size = size;
 
   glViewport(0, 0, size.x, size.y);
-  printf("--------------------------------------\n\r");
+
 #ifdef SOFTWARE_ROTATE_DISPLAY
   OrientationSwap(size, display_orientation);
 #endif
