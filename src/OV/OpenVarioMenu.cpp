@@ -383,7 +383,11 @@ Main()
   dialog_settings.SetDefaults();
 
   ScreenGlobalInit screen_init;
-  Layout::Initialise(screen_init.GetDisplay(), {600, 800});
+#ifdef MESA_KMS
+  Layout::Initialise(screen_init.GetDisplay(), {800, 480},1,150);
+#else
+  Layout::Initialise(screen_init.GetDisplay(), {800, 480});
+#endif
   InitialiseFonts();
 
   DialogLook dialog_look;
