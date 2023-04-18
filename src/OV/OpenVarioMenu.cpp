@@ -17,6 +17,7 @@
 #include "Language/Language.hpp"
 #include "system/Process.hpp"
 #include "util/ScopeExit.hxx"
+#include "Hardware/DisplayDPI.hpp"
 
 #include <cassert>
 
@@ -383,11 +384,10 @@ Main()
   dialog_settings.SetDefaults();
 
   ScreenGlobalInit screen_init;
-#ifdef MESA_KMS
-  Layout::Initialise(screen_init.GetDisplay(), {800, 480},1,150);
-#else
+
+  Display::SetForcedDPI(150, 150);
   Layout::Initialise(screen_init.GetDisplay(), {800, 480});
-#endif
+
   InitialiseFonts();
 
   DialogLook dialog_look;
