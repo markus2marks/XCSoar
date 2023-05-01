@@ -20,7 +20,8 @@ install-manual: manual
 install-menu: menu
 	install -d -m 0755 $(prefix)/bin
 	install -m 0755 $(TARGET_BIN_DIR)/OpenVarioMenu $(prefix)/bin
-
+	cp -rf src/OV/update-system.sh $(prefix)/bin
+	cp -rf src/OV/raspinfo.sh $(prefix)/bin
 
 install: install-bin install-mo install-manual
 
