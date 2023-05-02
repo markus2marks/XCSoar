@@ -72,7 +72,7 @@ private:
   void StartXCSoar() noexcept {
     const UI::ScopeDropMaster drop_master{display};
     const UI::ScopeSuspendEventQueue suspend_event_queue{event_queue};
-    Run("/usr/bin/xcsoar", "-fly");
+    Run("/usr/bin/xcsoar", "-fly", "-dpi=150");
   }
 
   void ScheduleTimer() noexcept {
