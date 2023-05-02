@@ -110,10 +110,7 @@ UIGlobals::GetMainWindow()
 //                   });
 //}
 
-
-
-static int
-Main(UI::EventQueue &event_queue, UI::SingleWindow &main_window,
+static int Main(UI::EventQueue &event_queue, UI::SingleWindow &main_window,
      const DialogLook &dialog_look)
 {
   TWidgetDialog<MainMenuWidget>
@@ -124,8 +121,7 @@ Main(UI::EventQueue &event_queue, UI::SingleWindow &main_window,
   return dialog.ShowModal();
 }
 
-static int
-Main()
+static int Main()
 {
   dialog_settings.SetDefaults();
 
@@ -144,7 +140,11 @@ Main()
 
   UI::SingleWindow main_window{screen_init.GetDisplay()};
   main_window.Create(_T("XCSoar/KoboMenu"), {600, 800}, main_style);
+#ifdef MESA_KMS
+  main_style.InitialOrientation(DisplayOrientation::PORTRAIT);
+#else
   main_style.InitialOrientation(DisplayOrientation::REVERSE_PORTRAIT);
+#endif
   main_window.Show();
 
   global_dialog_look = &dialog_look;

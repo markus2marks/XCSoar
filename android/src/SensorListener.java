@@ -25,11 +25,29 @@ public interface SensorListener {
   void onAccelerationSensor(float ddx, float ddy, float ddz);
   void onRotationSensor(float dtheta_x, float dtheta_y, float dtheta_z);
   void onMagneticFieldSensor(float h_x, float h_y, float h_z);
+  /**
+   * @param[in] pressure Atmospheric static pressure in Hecto Pascal.
+   * @param[in] sensor_noise_variance Sensor noise variance for Kalman filtering of pressure.
+   */
   void onBarometricPressureSensor(float pressure, float sensor_noise_variance);
   void onPressureAltitudeSensor(float altitude);
   void onI2CbaroSensor(int index, int sensorType, int pressure);
   void onVarioSensor(float vario);
   void onHeartRateSensor(int bpm);
+  /**
+   * @param[in] has_cht_temp Is the Engine Cylinder Head Temperature sensor present?
+   * @param[in] cht_temp Engine Cylinder Head Temperature.
+   * @param[in] has_egt_temp Is the Engine Exhaust Gas Temperature sensor present?
+   * @param[in] egt_temp Engine Exhaust Gas Temperature.
+   * @param[in] has_revs_per_sec Is the Engine Revolutions Per Second sensor present?
+   * @param[in] revs_per_sec Engine Revolutions Per Second, rotations per seconds of the camshaft.
+   */
+  void onEngineSensors(boolean has_cht_temp,
+                       int cht_temp,
+                       boolean has_egt_temp,
+                       int egt_temp,
+                       boolean has_revs_per_sec,
+                       float revs_per_sec);
 
   void onVoltageValues(int temp_adc, int voltage_index, int volt_adc);
 

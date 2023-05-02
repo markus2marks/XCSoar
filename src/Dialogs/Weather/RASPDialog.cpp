@@ -2,9 +2,11 @@
 // Copyright The XCSoar Project
 
 #include "RASPDialog.hpp"
-#include "Dialogs/DownloadFilePicker.hpp"
 #include "Widget/RowFormWidget.hpp"
+#include "Weather/Rasp/Configured.hpp"
 #include "Weather/Rasp/RaspStore.hpp"
+#include "Profile/Keys.hpp"
+#include "Profile/Profile.hpp"
 #include "ui/control/List.hpp"
 #include "Form/Edit.hpp"
 #include "Form/DataField/Enum.hpp"
@@ -21,9 +23,9 @@ class RASPSettingsPanel final
   : public RowFormWidget, DataFieldListener {
 
   enum Controls {
+    FILE,
     ITEM,
     TIME,
-    DOWNLOAD,
   };
 
   std::shared_ptr<RaspStore> rasp;
@@ -39,7 +41,6 @@ private:
   void FillItemControl() noexcept;
   void UpdateTimeControl() noexcept;
   void OnTimeModified(const DataFieldEnum &df) noexcept;
-  void Download() noexcept;
 
   /* methods from Widget */
   void Prepare(ContainerWindow &parent, const PixelRect &rc) noexcept override;
@@ -76,6 +77,8 @@ RASPSettingsPanel::FillItemControl() noexcept
 
   const WeatherUIState &state = CommonInterface::GetUIState().weather;
   df.SetValue(state.map);
+
+  GetControl(ITEM).RefreshDisplay();
 }
 
 void
@@ -113,20 +116,6 @@ RASPSettingsPanel::OnTimeModified(const DataFieldEnum &df) noexcept
 }
 
 void
-RASPSettingsPanel::Download() noexcept
-{
-  auto path = DownloadFilePicker(FileType::RASP);
-  if (path == nullptr)
-    return;
-
-  rasp = std::make_shared<RaspStore>(std::move(path));
-  rasp->ScanAll();
-
-  DataGlobals::SetRasp(std::shared_ptr<RaspStore>(rasp));
-  FillItemControl();
-}
-
-void
 RASPSettingsPanel::Prepare([[maybe_unused]] ContainerWindow &parent,
                            [[maybe_unused]] const PixelRect &rc) noexcept
 {
@@ -135,16 +124,25 @@ RASPSettingsPanel::Prepare([[maybe_unused]] ContainerWindow &parent,
 
   WndProperty *wp;
 
+  wp = AddFile(_("File"), nullptr,
+               ProfileKeys::RaspFile, _T("*-rasp*.dat\0"),
+               FileType::RASP);
+  wp->GetDataField()->SetOnModified([this]{
+    if (SaveValueFileReader(FILE, ProfileKeys::RaspFile)) {
+      rasp = LoadConfiguredRasp();
+      DataGlobals::SetRasp(rasp);
+      FillItemControl();
+      UpdateTimeControl();
+      Profile::Save();
+    }
+  });
+
   wp = AddEnum(_("Field"), nullptr, this);
   wp->GetDataField()->EnableItemHelp(true);
   FillItemControl();
 
-  wp->RefreshDisplay();
-
   AddEnum(_("Time"), nullptr, this);
   UpdateTimeControl();
-
-  AddButton(_("Download"), [this](){ Download(); });
 }
 
 bool

@@ -8,11 +8,10 @@
 #include "Operation/Operation.hpp"
 #include "Operation/Cancelled.hpp"
 #include "util/Exception.hxx"
+#include "util/SpanCast.hxx"
 
 #include <algorithm>
 #include <cassert>
-
-#include <string.h>
 
 Port::Port(PortListener *_listener, DataHandler &_handler) noexcept
   :listener(_listener), handler(_handler) {}
@@ -33,39 +32,38 @@ Port::WaitConnected(OperationEnvironment &env)
 }
 
 std::size_t
-Port::Write(const char *s)
+Port::Write(std::string_view s)
 {
-  return Write(s, strlen(s));
+  return Write(AsBytes(s));
 }
 
 void
-Port::FullWrite(const void *buffer, std::size_t length,
+Port::FullWrite(std::span<const std::byte> src,
                 OperationEnvironment &env,
                 std::chrono::steady_clock::duration _timeout)
 {
   const TimeoutClock timeout(_timeout);
 
-  const char *p = (const char *)buffer, *end = p + length;
-  while (p < end) {
+  while (!src.empty()) {
     if (timeout.HasExpired())
       throw DeviceTimeout{"Port write timeout"};
 
-    std::size_t nbytes = Write(p, end - p);
+    std::size_t nbytes = Write(src);
     assert(nbytes > 0);
 
     if (env.IsCancelled())
       throw OperationCancelled{};
 
-    p += nbytes;
+    src = src.subspan(nbytes);
   }
 }
 
 void
-Port::FullWriteString(const char *s,
-                      OperationEnvironment &env,
-                      std::chrono::steady_clock::duration timeout)
+Port::FullWrite(std::string_view s,
+                OperationEnvironment &env,
+                std::chrono::steady_clock::duration timeout)
 {
-  FullWrite(s, strlen(s), env, timeout);
+  FullWrite(AsBytes(s), env, timeout);
 }
 
 std::byte
@@ -183,16 +181,16 @@ Port::WaitAndRead(void *buffer, std::size_t length,
 }
 
 void
-Port::ExpectString(const char *token, OperationEnvironment &env,
+Port::ExpectString(std::string_view token, OperationEnvironment &env,
                    std::chrono::steady_clock::duration _timeout)
 {
-  const char *const token_end = token + strlen(token);
+  const char *const token_end = token.data() + token.size();
 
   const TimeoutClock timeout(_timeout);
 
   char buffer[256];
 
-  const char *p = token;
+  const char *p = token.data();
   while (true) {
     auto nbytes = WaitAndRead(buffer,
                               std::min(sizeof(buffer),
@@ -203,7 +201,7 @@ Port::ExpectString(const char *token, OperationEnvironment &env,
       const char ch = *q;
       if (ch != *p)
         /* retry */
-        p = token;
+        p = token.data();
       else if (++p == token_end)
         return;
     }
@@ -211,7 +209,7 @@ Port::ExpectString(const char *token, OperationEnvironment &env,
 }
 
 void
-Port::WaitForChar(const char token, OperationEnvironment &env,
+Port::WaitForByte(const std::byte token, OperationEnvironment &env,
                   std::chrono::steady_clock::duration _timeout)
 {
   const TimeoutClock timeout(_timeout);
@@ -220,8 +218,8 @@ Port::WaitForChar(const char token, OperationEnvironment &env,
     WaitRead(env, timeout.GetRemainingOrZero());
 
     // Read and compare character with token
-    const char ch = (char)ReadByte();
-    if (ch == token)
+    const auto b = ReadByte();
+    if (b == token)
       break;
 
     if (timeout.HasExpired())
