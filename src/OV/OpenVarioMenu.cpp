@@ -137,14 +137,14 @@ static int Main()
 
   UI::TopWindowStyle main_style;
   main_style.Resizable();
-
-  UI::SingleWindow main_window{screen_init.GetDisplay()};
-  main_window.Create(_T("XCSoar/KoboMenu"), {600, 800}, main_style);
 #ifdef MESA_KMS
   main_style.InitialOrientation(DisplayOrientation::PORTRAIT);
 #else
-  main_style.InitialOrientation(DisplayOrientation::REVERSE_PORTRAIT);
+  main_style.InitialOrientation(DisplayOrientation::LANDSCAPE);
 #endif
+  UI::SingleWindow main_window{screen_init.GetDisplay()};
+  main_window.Create(_T("XCSoar/KoboMenu"), {600, 800}, main_style);
+
   main_window.Show();
 
   global_dialog_look = &dialog_look;
