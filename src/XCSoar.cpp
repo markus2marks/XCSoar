@@ -42,7 +42,9 @@
 #import <AppKit/AppKit.h>
 #endif
 #endif
+#ifdef MESA_KMS
 #include "ui/display/egl/DrmDisplay.hpp"
+#endif
 #include <cassert>
 
 static const char *const Usage = "\n"
