@@ -10,7 +10,7 @@
 void FileMenuWidget::Prepare([[maybe_unused]] ContainerWindow &parent,
                         [[maybe_unused]] const PixelRect &rc) noexcept
 {
-  AddButton("Download XCSoar IGC files to USB", [this](){
+  AddButton("Download XCSoar IGC files to SD-Card", [this](){
     const UI::ScopeDropMaster drop_master{display};
     const UI::ScopeSuspendEventQueue suspend_event_queue{event_queue};
     Run("/usr/bin/download-igc.sh");
@@ -26,7 +26,7 @@ void FileMenuWidget::Prepare([[maybe_unused]] ContainerWindow &parent,
                      "Downloading files", argv);
   });
 
-  AddButton("Upload files from USB to XCSoar", [](){
+  AddButton("Upload files from SD-Card to XCSoar", [](){
     static constexpr const char *argv[] = {
       "/usr/bin/upload-xcsoar.sh", nullptr
     };
