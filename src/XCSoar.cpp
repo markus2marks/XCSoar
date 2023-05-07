@@ -42,7 +42,7 @@
 #import <AppKit/AppKit.h>
 #endif
 #endif
-
+#include "ui/display/egl/DrmDisplay.hpp"
 #include <cassert>
 
 static const char *const Usage = "\n"
@@ -74,7 +74,10 @@ static const char *const Usage = "\n"
 static int
 Main()
 {
-  ScreenGlobalInit screen_init;
+#ifdef MESA_KMS
+    EGL::DrmDisplay::DisplayOpenDriDevice();
+#endif
+	ScreenGlobalInit screen_init;
 
 #if defined(__APPLE__) && !TARGET_OS_IPHONE
   // We do not want the ugly non-localized main menu which SDL creates
@@ -99,6 +102,7 @@ Main()
   // Perform application initialization and run loop
   int ret = EXIT_FAILURE;
 #ifdef MESA_KMS
+
   if (Startup(screen_init.GetDisplay(), screen_init.GetRoundDisplay()))
   {
       CommonInterface::main_window->addRoundDisplay((UI::TopWindow*)CommonInterface::round_window);

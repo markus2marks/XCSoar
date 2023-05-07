@@ -12,14 +12,14 @@ struct gbm_bo;
 namespace EGL {
 
 class DrmFrameBuffer {
-  const FileDescriptor dri_fd;
+  FileDescriptor &dri_fd;
   uint32_t id;
 
 public:
   /**
    * Throws on error.
    */
-  DrmFrameBuffer(FileDescriptor _dri_fd,
+  DrmFrameBuffer(FileDescriptor &_dri_fd,
                  uint32_t width, uint32_t height,
                  uint8_t depth, uint8_t bpp,
                  uint32_t pitch,

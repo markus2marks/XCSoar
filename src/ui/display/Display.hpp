@@ -84,7 +84,7 @@ class Display
 public:
   Display(uint8_t connectorPort)
     :EGL::DrmDisplay(connectorPort),
-     EGL::GbmDisplay(GetDriFD()),
+     EGL::GbmDisplay(DrmDisplay::getDisplayOpenDriDevice()),
      EGL::Display(GetGbmDevice()) {}
 
   void SetDirty() noexcept {

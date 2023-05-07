@@ -161,6 +161,7 @@ static int Main()
 
 int main()
 {
+  EGL::DrmDisplay::DisplayOpenDriDevice();
   int action = Main();
 
   switch (action) {

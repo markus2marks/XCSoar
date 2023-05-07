@@ -6,17 +6,17 @@
 #include "xf86drmMode.h"
 
 #include <stdexcept>
-
+#include "ui/display/egl/DrmDisplay.hpp"
 namespace EGL {
 
-DrmFrameBuffer::DrmFrameBuffer(FileDescriptor _dri_fd,
+DrmFrameBuffer::DrmFrameBuffer(FileDescriptor &_dri_fd,
                                uint32_t width, uint32_t height,
                                uint8_t depth, uint8_t bpp,
                                uint32_t pitch,
                                uint32_t bo_handle)
   :dri_fd(_dri_fd)
 {
-  if (drmModeAddFB(dri_fd.Get(),
+  if (drmModeAddFB( DrmDisplay::getDisplayOpenDriDevice().Get(),
                    width, height, depth, bpp, pitch, bo_handle,
                    &id) != 0)
     throw std::runtime_error{"drmModeAddFB() failed"};

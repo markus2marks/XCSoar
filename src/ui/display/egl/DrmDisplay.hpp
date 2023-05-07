@@ -13,7 +13,7 @@ namespace EGL {
 
 class DrmDisplay {
   UniqueFileDescriptor dri_fd;
-
+  static UniqueFileDescriptor dri_fd2;
   drmModeModeInfo mode;
 
   uint32_t connector_id;
@@ -31,10 +31,18 @@ public:
 
   ~DrmDisplay() noexcept;
 
-  FileDescriptor GetDriFD() const noexcept {
+  FileDescriptor GetDriFD() const noexcept
+  {
     return dri_fd;
   }
+//  static void OpenDriDevice();
+//  void SetDriFD(UniqueFileDescriptor &test)
+//  {
+//     dri_fd = test;
+//  }
 
+  static void DisplayOpenDriDevice();
+  static FileDescriptor getDisplayOpenDriDevice();
   /**
    * Acquire the DRM master lease.
    *
@@ -54,13 +62,13 @@ public:
 
   [[gnu::pure]]
   drmModeCrtcPtr ModeGetCrtc() const noexcept {
-    return drmModeGetCrtc(dri_fd.Get(), crtc_id);
+    return drmModeGetCrtc(dri_fd2.Get(), crtc_id);
   }
 
   int ModeSetCrtc(uint32_t crtcId, uint32_t bufferId,
                   uint32_t x, uint32_t y,
                   drmModeModeInfoPtr mode) noexcept {
-    return drmModeSetCrtc(dri_fd.Get(), crtcId, bufferId,
+    return drmModeSetCrtc(dri_fd2.Get(), crtcId, bufferId,
                           x, y,
                           &connector_id, 1,
                           mode);
@@ -71,7 +79,7 @@ public:
   }
 
   int ModePageFlip(uint32_t fb_id, uint32_t flags, void *user_data) noexcept {
-    return drmModePageFlip(dri_fd.Get(), crtc_id, fb_id, flags, user_data);
+    return drmModePageFlip(dri_fd2.Get(), crtc_id, fb_id, flags, user_data);
   }
 
   PixelSize GetSize() const noexcept {
@@ -82,7 +90,7 @@ public:
     return size_mm;
   }
 
-  void findConnector(FileDescriptor dri_fd, const drmModeRes* resources);
+  void findConnector(const drmModeRes* resources);
 };
 
 } // namespace EGL

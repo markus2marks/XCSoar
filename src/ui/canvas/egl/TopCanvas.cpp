@@ -4,6 +4,7 @@
 #include "ui/canvas/custom/TopCanvas.hpp"
 #include "ui/canvas/opengl/Globals.hpp"
 #include "ui/display/Display.hpp"
+#include "ui/display/egl/DrmDisplay.hpp"
 #include "ui/dim/Size.hpp"
 #include "system/Error.hxx"
 #include "util/RuntimeError.hxx"
@@ -138,8 +139,8 @@ void TopCanvas::Flip()
 
     bool flip_finished = false;
     int page_flip_ret = 0;
-    const FileDescriptor dri_fd = display.GetDriFD();
-
+//    const FileDescriptor dri_fd = display.GetDriFD();
+    FileDescriptor dri_fd = EGL::DrmDisplay::getDisplayOpenDriDevice();
     display.SetMaster();
 
       if (!display.SwapBuffers(surface)) {
@@ -156,6 +157,7 @@ void TopCanvas::Flip()
 
       auto *fb = (EGL::DrmFrameBuffer *)gbm_bo_get_user_data(new_bo);
       if (!fb) {
+          printf("fb init %i \n", dri_fd.Get());
         fb = new EGL::DrmFrameBuffer(dri_fd, gbm_bo_get_width(new_bo),
                                      gbm_bo_get_height(new_bo), 24, 32,
                                      gbm_bo_get_stride(new_bo),
