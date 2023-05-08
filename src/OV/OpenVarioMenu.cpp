@@ -3,7 +3,7 @@
 
 
 #include "MainMenuWidget.h"
-
+//#include "OpenVarioMenu.h"
 #include <cassert>
 
 
@@ -113,9 +113,7 @@ UIGlobals::GetMainWindow()
 static int Main(UI::EventQueue &event_queue, UI::SingleWindow &main_window,
      const DialogLook &dialog_look)
 {
-  TWidgetDialog<MainMenuWidget>
-    dialog(WidgetDialog::Full{}, main_window,
-           dialog_look, "OpenVario");
+  TWidgetDialog<MainMenuWidget> dialog(WidgetDialog::Full{}, main_window, dialog_look, "OpenVario");
   dialog.SetWidget(main_window.GetDisplay(), event_queue, dialog);
 
   return dialog.ShowModal();

@@ -72,6 +72,11 @@ void DrmDisplay::DisplayOpenDriDevice()
 			{
 				throw FormatErrno("Could not open DRI device %s", path0);
 			}
+			drmModeRes *resources = drmModeGetResources(dri_fd2.Get());
+			if (resources == nullptr)
+			{
+				throw FormatErrno("drmModeGetResources() for DRI device failed");
+			}
 		}
 		catch (...)
 		{
@@ -80,6 +85,11 @@ void DrmDisplay::DisplayOpenDriDevice()
 				if (!dri_fd2.Open(path1, O_RDWR))
 				{
 					throw FormatErrno("Could not open DRI device %s", path1);
+				}
+				drmModeRes *resources = drmModeGetResources(dri_fd2.Get());
+				if (resources == nullptr)
+				{
+					throw FormatErrno("drmModeGetResources() for DRI device failed");
 				}
 			}
 			catch (...)
@@ -92,10 +102,7 @@ void DrmDisplay::DisplayOpenDriDevice()
     try
     {
 
-		drmModeRes *resources = drmModeGetResources(dri_fd2.Get());
-		  if (resources == nullptr)
-			throw FormatErrno("drmModeGetResources() for DRI device failed");
-		  printf("fd 2 %i \n", dri_fd2.Get());
+
     }
     catch (...)
 	{
