@@ -8,30 +8,44 @@
 #include "FileMenuWidget.h"
 #include <sys/mount.h>
 #include "Widget/TextWidget.hpp"
-//#include "OpenVarioMenu.h"
+#include "Dialogs/WidgetDialog.hpp"
+#include "MainMenuWidget.h"
 
-void loadIGCToSDCard();
 
-void loadIGCToSDCard()
+void FileMenuWidget::loadIGCToSDCard()
 {
-    TextWidget text;
-    PixelRect pr(100,100,100,100);
-    text.Prepare(*(UIGlobals::GetMainWindow().GetParent()), pr);
-    int ret_val = mount("/dev/mmcblk2p1", "media/sd-card", "", MS_SHARED, "");
-    if (ret_val == 0)
-    {
-            text.SetText("mount succeed\n");
-    }
-    else
-    {
-        text.SetText("mount failed\n");
-    }
+
+//    int ret_val = 1;//mount("/dev/mmcblk2p1", "media/sd-card", "", MS_SHARED, "");
+//    if (ret_val == 0)
+//    {
+//            text.SetText("mount succeed\n");
+//    }
+//    else
+//    {
+//        text.SetText("mount failed\n");
+//    }
 }
+
 
 void FileMenuWidget::Prepare([[maybe_unused]] ContainerWindow &parent,
                         [[maybe_unused]] const PixelRect &rc) noexcept
 {
-  AddButton("Download XCSoar IGC files to SD-Card", loadIGCToSDCard);
+
+  AddButton("Download XCSoar IGC files to SD-Card", [this]()
+    {
+      ShowRow(3);
+       int ret_val = mount("/dev/mmcblk2p1", "media/sd-card", "", MS_SHARED, "");
+          if (ret_val == 0)
+          {
+            this->SetMultiLineText(3,"mount succeed\n");
+          }
+          else
+          {
+            this->SetMultiLineText(3,"mount failed\n");
+          }
+
+    }
+  );
 
   AddButton("Download XCSoar to USB", [](){
     static constexpr const char *argv[] = {
@@ -52,5 +66,6 @@ void FileMenuWidget::Prepare([[maybe_unused]] ContainerWindow &parent,
                      UIGlobals::GetDialogLook(),
                      "Uploading files", argv);
   });
+  AddMultiLine("");
 }
 

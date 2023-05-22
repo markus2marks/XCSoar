@@ -62,11 +62,8 @@ class MainMenuWidget final : public RowFormWidget
   unsigned remaining_seconds = 3;
 
 public:
-  MainMenuWidget(UI::Display &_display, UI::EventQueue &_event_queue,
-                 WndForm &_dialog) noexcept
-    :RowFormWidget(_dialog.GetLook()),
-     display(_display), event_queue(_event_queue),
-     dialog(_dialog) {}
+  MainMenuWidget(UI::Display &_display, UI::EventQueue &_event_queue, WndForm &_dialog) noexcept
+  : RowFormWidget(_dialog.GetLook()), display(_display), event_queue(_event_queue), dialog(_dialog) {}
 
 private:
   void StartXCSoar() noexcept {

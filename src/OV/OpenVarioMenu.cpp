@@ -76,7 +76,7 @@ UIGlobals::GetMainWindow()
 //                                    ? RESULT_BOARD_NOT_INITIALISED
 //                                    : 0;
 //                                });
-//  if (result != RESULT_BOARD_NOT_INITIALISED)
+//  if (result != RESULT_BOARD_NOT_INITIALISED)    wd.ShowModal();
 //    return;
 //
 //  /* initialise the sensors? */
@@ -159,7 +159,9 @@ static int Main()
 
 int main()
 {
+#ifdef MESA_KMS
   EGL::DrmDisplay::DisplayOpenDriDevice();
+#endif
   int action = Main();
 
   switch (action) {
