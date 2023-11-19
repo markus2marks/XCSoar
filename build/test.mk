@@ -766,6 +766,7 @@ DEBUG_PROGRAM_NAMES += \
 	ReadProfileString ReadProfileInt \
 	KeyCodeDumper \
 	ReadPort RunPortHandler LogPort \
+	SplicePorts \
 	RunDeviceDriver RunDeclare RunFlightList RunDownloadFlight \
 	RunEnableNMEA \
 	CAI302Tool \
@@ -886,7 +887,7 @@ DEBUG_REPLAY_SOURCES = \
 	$(TEST_SRC_DIR)/DebugReplayIGC.cpp \
 	$(TEST_SRC_DIR)/DebugReplayNMEA.cpp \
 	$(TEST_SRC_DIR)/DebugReplay.cpp
-DEBUG_REPLAY_DEPENDS = DRIVER OPERATION LIBNMEA ASYNC LIBNET IO OS THREAD TIME
+DEBUG_REPLAY_DEPENDS = DRIVER ASYNC LIBNET IO OS THREAD TIME
 
 BENCHMARK_PROJECTION_SOURCES = \
 	$(SRC)/Projection/Projection.cpp \
@@ -991,7 +992,7 @@ RUN_WEGLIDE_DOWNLOAD_TASK_SOURCES = \
 	$(SRC)/Engine/Util/Gradient.cpp \
 	$(SRC)/net/SocketError.cxx \
 	$(TEST_SRC_DIR)/RunWeGlideDownloadTask.cpp
-RUN_WEGLIDE_DOWNLOAD_TASK_DEPENDS = LIBCLIENT TASK ROUTE GLIDE WAYPOINT GEO TIME MATH LIBHTTP ASYNC LIBNET OPERATION IO OS UTIL
+RUN_WEGLIDE_DOWNLOAD_TASK_DEPENDS = LIBCLIENT JSON TASK ROUTE GLIDE WAYPOINT GEO TIME MATH LIBHTTP ASYNC LIBNET OPERATION IO OS UTIL FMT
 $(eval $(call link-program,RunWeGlideDownloadTask,RUN_WEGLIDE_DOWNLOAD_TASK))
 
 RUN_NOAA_DOWNLOADER_SOURCES = \
@@ -1029,7 +1030,7 @@ RUN_SL_TRACKING_SOURCES = \
 	$(SRC)/Formatter/NMEAFormatter.cpp \
 	$(SRC)/TransponderCode.cpp \
 	$(TEST_SRC_DIR)/RunSkyLinesTracking.cpp
-RUN_SL_TRACKING_DEPENDS = $(DEBUG_REPLAY_DEPENDS) ASYNC GEO MATH UTIL
+RUN_SL_TRACKING_DEPENDS = $(DEBUG_REPLAY_DEPENDS)
 $(eval $(call link-program,RunSkyLinesTracking,RUN_SL_TRACKING))
 
 RUN_LIVETRACK24_SOURCES = \
@@ -1065,7 +1066,6 @@ $(eval $(call link-program,RunXMLParser,RUN_XML_PARSER))
 
 READ_MO_SOURCES = \
 	$(SRC)/Language/MOFile.cpp \
-	$(SRC)/system/FileMapping.cpp \
 	$(TEST_SRC_DIR)/ReadMO.cpp
 READ_MO_DEPENDS = IO UTIL
 $(eval $(call link-program,ReadMO,READ_MO))
@@ -1286,6 +1286,18 @@ LOG_PORT_SOURCES = \
 	$(TEST_SRC_DIR)/LogPort.cpp
 LOG_PORT_DEPENDS = PORT ASYNC LIBNET OPERATION IO OS THREAD TIME UTIL
 $(eval $(call link-program,LogPort,LOG_PORT))
+
+SPLICE_PORTS_SOURCES = \
+	$(SRC)/Device/Port/ConfiguredPort.cpp \
+	$(SRC)/Device/Config.cpp \
+	$(SRC)/Operation/ConsoleOperationEnvironment.cpp \
+	$(TEST_SRC_DIR)/FakeLogFile.cpp \
+	$(TEST_SRC_DIR)/FakeLanguage.cpp \
+	$(TEST_SRC_DIR)/DebugPort.cpp \
+	$(TEST_SRC_DIR)/FakeLanguage.cpp \
+	$(TEST_SRC_DIR)/SplicePorts.cpp
+SPLICE_PORTS_DEPENDS = PORT ASYNC LIBNET OPERATION IO OS THREAD TIME UTIL
+$(eval $(call link-program,SplicePorts,SPLICE_PORTS))
 
 RUN_DEVICE_DRIVER_SOURCES = \
 	$(SRC)/FLARM/FlarmId.cpp \
@@ -2469,6 +2481,9 @@ EMULATE_DEVICE_SOURCES = \
 	$(TEST_SRC_DIR)/FakeLogFile.cpp \
 	$(TEST_SRC_DIR)/FakeLanguage.cpp \
 	$(TEST_SRC_DIR)/DebugPort.cpp \
+	$(TEST_SRC_DIR)/ATR833Emulator.cpp \
+	$(TEST_SRC_DIR)/FLARMEmulator.cpp \
+	$(TEST_SRC_DIR)/VegaEmulator.cpp \
 	$(TEST_SRC_DIR)/EmulateDevice.cpp
 EMULATE_DEVICE_DEPENDS = PORT ASYNC LIBNET OPERATION IO OS THREAD LIBNMEA GEO MATH TIME UTIL
 $(eval $(call link-program,EmulateDevice,EMULATE_DEVICE))
@@ -2521,6 +2536,7 @@ DUMP_TASK_FILE_SOURCES = \
 	$(SRC)/Waypoint/WaypointReaderSeeYou.cpp \
 	$(SRC)/Waypoint/Factory.cpp \
 	$(SRC)/RadioFrequency.cpp \
+	$(SRC)/Engine/Route/Config.cpp \
 	$(TEST_SRC_DIR)/FakeTerrain.cpp \
 	$(TEST_SRC_DIR)/DumpTaskFile.cpp
 DUMP_TASK_FILE_DEPENDS = TASK GLIDE WAYPOINT OPERATION IO OS THREAD ZZIP GEO TIME MATH UTIL

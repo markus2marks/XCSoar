@@ -16,12 +16,12 @@ UpdateInfoBoxContentCHT(InfoBoxData &data) noexcept
 {
   const NMEAInfo &basic = CommonInterface::Basic();
 
-  if (!basic.engine_state.cht_temperature_available.IsValid()) {
+  if (!basic.engine.cht_temperature_available.IsValid()) {
     data.SetInvalid();
     return;
   }
 
-  data.FmtValue(_T("{:3.0f}"), basic.engine_state.cht_temperature.ToUser());
+  data.FmtValue(_T("{:3.0f}"), basic.engine.cht_temperature.ToUser());
   data.SetValueUnit(Units::current.temperature_unit);
 }
 
@@ -29,11 +29,13 @@ void
 UpdateInfoBoxContentEGT(InfoBoxData &data) noexcept
 {
   const NMEAInfo &basic = CommonInterface::Basic();
-  if (!basic.engine_state.egt_temperature_available.IsValid()) {
+
+  if (!basic.engine.egt_temperature_available.IsValid()) {
     data.SetInvalid();
     return;
   }
-  data.FmtValue(_T("{:3.0f}"), basic.engine_state.egt_temperature.ToUser());
+
+  data.FmtValue(_T("{:3.0f}"), basic.engine.egt_temperature.ToUser());
   data.SetValueUnit(Units::current.temperature_unit);
 }
 
@@ -41,11 +43,12 @@ void
 UpdateInfoBoxContentRPM(InfoBoxData &data) noexcept
 {
   const NMEAInfo &basic = CommonInterface::Basic();
-  if (!basic.engine_state.revs_per_sec_available.IsValid()) {
+
+  if (!basic.engine.revolutions_per_second_available.IsValid()) {
     data.SetInvalid();
     return;
   }  
 
-  data.FmtValue(_T("{}"), Units::ToUserRotation(basic.engine_state.revs_per_sec));
+  data.FmtValue(_T("{}"), Units::ToUserRotation(basic.engine.revolutions_per_second));
   data.SetValueUnit(Units::current.rotation_unit);
 }

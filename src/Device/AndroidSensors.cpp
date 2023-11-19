@@ -292,30 +292,40 @@ DeviceDescriptor::OnEngineSensors(bool has_cht,
                                   Temperature cht,
                                   bool has_egt,
                                   Temperature egt,
-                                  bool has_revs_per_sec,
-                                  float revs_per_sec) noexcept
+                                  bool has_ignitions_per_second,
+                                  float ignitions_per_second) noexcept
 {
   const auto e = BeginEdit();
   NMEAInfo &basic = *e;
   basic.UpdateClock();
   basic.alive.Update(basic.clock);
-  if(has_revs_per_sec){
-    basic.engine_state.revs_per_sec = revs_per_sec;
-    basic.engine_state.revs_per_sec_available.Update(basic.clock);
-  }else{
-    basic.engine_state.revs_per_sec_available.Clear();
+
+  if (has_ignitions_per_second) {
+    basic.engine.ignitions_per_second = ignitions_per_second;
+    basic.engine.ignitions_per_second_available.Update(basic.clock);
+
+    if (config.engine_type != DeviceConfig::EngineType::NONE) {
+      basic.engine.revolutions_per_second = ignitions_per_second *
+        config.ignitions_to_revolutions_factors[static_cast<unsigned>(config.engine_type)];
+      basic.engine.revolutions_per_second_available.Update(basic.clock);
+    } else
+      basic.engine.revolutions_per_second_available.Clear();
+  } else {
+    basic.engine.ignitions_per_second_available.Clear();
+    basic.engine.revolutions_per_second_available.Clear();
   }
+
   if(has_cht){
-    basic.engine_state.cht_temperature = cht;
-    basic.engine_state.cht_temperature_available.Update(basic.clock);
+    basic.engine.cht_temperature = cht;
+    basic.engine.cht_temperature_available.Update(basic.clock);
   }else{
-    basic.engine_state.cht_temperature_available.Clear();
+    basic.engine.cht_temperature_available.Clear();
   }
   if(has_egt){
-    basic.engine_state.egt_temperature = egt;
-    basic.engine_state.egt_temperature_available.Update(basic.clock);
+    basic.engine.egt_temperature = egt;
+    basic.engine.egt_temperature_available.Update(basic.clock);
   }else{
-    basic.engine_state.egt_temperature_available.Clear();
+    basic.engine.egt_temperature_available.Clear();
   }
   e.Commit();
 }

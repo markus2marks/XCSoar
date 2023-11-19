@@ -17,6 +17,8 @@
 #include <android/native_window_jni.h>
 #endif
 
+#include <cassert>
+
 #include <stdio.h>
 
 #ifdef MESA_KMS
@@ -60,7 +62,9 @@ void
 TopCanvas::CreateSurface(EGLNativeWindowType native_window)
 {
 
-    surface = display.CreateWindowSurface(native_window);
+  assert(surface == EGL_NO_SURFACE);
+
+  surface = display.CreateWindowSurface(native_window);
 
   const PixelSize effective_size = GetNativeSize();
   if (effective_size.width == 0 || effective_size.height == 0)
@@ -101,6 +105,8 @@ TopCanvas::GetNativeSize() const noexcept
 bool
 TopCanvas::AcquireSurface()
 {
+  assert(surface == EGL_NO_SURFACE);
+
   const auto env = Java::GetEnv();
   const auto android_surface = native_view->GetSurface(env);
   if (!android_surface)
@@ -109,6 +115,9 @@ TopCanvas::AcquireSurface()
 
   ANativeWindow *native_window =
     ANativeWindow_fromSurface(env, android_surface.Get());
+  if (native_window == nullptr)
+    return false;
+
   CreateSurface(native_window);
 
   return true;
@@ -133,6 +142,7 @@ void TopCanvas::setFocus()
     PixelSize effective_size = GetNativeSize();
     SetupViewport(effective_size);
 }
+
 
 void TopCanvas::Flip()
 {

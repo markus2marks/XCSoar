@@ -34,7 +34,7 @@ Profile::Load() noexcept
 {
   assert(startProfileFile != nullptr);
 
-  LogFormat("Loading profiles");
+  LogString("Loading profiles");
   LoadFile(startProfileFile);
   SetModified(false);
 }
@@ -56,7 +56,7 @@ Profile::Save() noexcept
   if (!IsModified())
     return;
 
-  LogFormat("Saving profiles");
+  LogString("Saving profiles");
   if (startProfileFile == nullptr)
     SetFiles(nullptr);
 
@@ -70,7 +70,7 @@ Profile::Save() noexcept
 }
 
 void
-Profile::SaveFile(Path path) noexcept
+Profile::SaveFile(Path path)
 {
   LogFormat(_T("Saving profile to %s"), path.c_str());
   SaveFile(map, path);

@@ -234,7 +234,7 @@ ifeq ($(TARGET),OSX64)
   override TARGET = UNIX
   TARGET_IS_DARWIN = y
   TARGET_IS_OSX = y
-  OSX_MIN_SUPPORTED_VERSION = 10.12
+  OSX_MIN_SUPPORTED_VERSION = 12.0
   HOST_TRIPLET = x86_64-apple-darwin
   LLVM_TARGET = $(HOST_TRIPLET)
   CLANG = y
@@ -319,7 +319,7 @@ endif
 ifeq ($(TARGET),ANDROID)
   ANDROID_NDK ?= $(HOME)/opt/android-ndk-r25c
 
-  ANDROID_SDK_PLATFORM = android-31
+  ANDROID_SDK_PLATFORM = android-33
   ANDROID_NDK_API = 21
 
   # The naming of CPU ABIs, architectures, and various NDK directory names is an unholy mess.

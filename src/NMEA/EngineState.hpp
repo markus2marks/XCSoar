@@ -11,9 +11,13 @@
 */
 struct EngineState
 {
+  /* For future use. */
+  Validity ignitions_per_second_available;
+  float ignitions_per_second;
+
   /* The engine box measured revolutions per second on the camshaft. */
-  Validity revs_per_sec_available;
-  float revs_per_sec;
+  Validity revolutions_per_second_available;
+  float revolutions_per_second;
 
   /* The engine Cylinder Head Temperature (CHT) */
   Validity cht_temperature_available;
@@ -23,8 +27,20 @@ struct EngineState
   Validity egt_temperature_available;
   Temperature egt_temperature;
 
+  /**
+   * Is any of the fields available?  This indicates that an engine
+   * sensor is connected.
+   */
+  bool IsAnyDefined() const noexcept {
+    return ignitions_per_second_available ||
+      revolutions_per_second_available ||
+      cht_temperature_available ||
+      egt_temperature_available;
+  }
+
   void Clear() noexcept{
-    revs_per_sec_available.Clear();
+    ignitions_per_second_available.Clear();
+    revolutions_per_second_available.Clear();
     cht_temperature_available.Clear();
     egt_temperature_available.Clear();
   }
@@ -34,14 +50,21 @@ struct EngineState
   }
 
   void Expire(TimeStamp clock) noexcept {
-    revs_per_sec_available.Expire(clock, std::chrono::seconds(3));
+    ignitions_per_second_available.Expire(clock, std::chrono::seconds(3));
+    revolutions_per_second_available.Expire(clock, std::chrono::seconds(3));
     cht_temperature_available.Expire(clock, std::chrono::seconds(3));
     egt_temperature_available.Expire(clock, std::chrono::seconds(3));
   }
 
   void Complement(const EngineState &add) noexcept {
-    if (revs_per_sec_available.Complement(add.revs_per_sec_available)){
-      revs_per_sec = add.revs_per_sec;
+    if (ignitions_per_second_available.Complement(add.ignitions_per_second_available))
+      ignitions_per_second = add.ignitions_per_second;
+
+    if (revolutions_per_second_available.Complement(add.revolutions_per_second_available)){
+      revolutions_per_second = add.revolutions_per_second;
+    }
+    if (revolutions_per_second_available.Complement(add.revolutions_per_second_available)){
+      revolutions_per_second = add.revolutions_per_second;
     }
     if (cht_temperature_available.Complement(add.cht_temperature_available)){
       cht_temperature = add.cht_temperature;

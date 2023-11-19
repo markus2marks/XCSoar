@@ -1,9 +1,44 @@
-Version 7.29 - not yet released
+Version 7.32 - not yet released
+* user interface
+  - fix horizon roll, show bank angles greater than 90°
+  - fix horizon pitch, show sky instead of ground when pitch is greater than 50°
+  - improve font scaling in the vario gauge
+  - support hot keys, gestures and double click on Horizon page
+* data files
+  - support waypoints without elevation data
+* Android
+  - don't disable IOIO completely if Bluetooth permission was not granted
+  - fix crash with initial IOIO connection
+  - fix lockup with IOIO Accessory connection
+
+Version 7.31 - 2023/05/12
+* user interface
+  - fix crash during startup
+* WeGlide
+  - fix crash bug after WeGlide flight upload
+  - show WeGlide error messages
+* Android
+  - fix crash with buggy graphics drivers
+
+Version 7.30 - 2023/05/09
+* fix crash in "ProfileSave" event
+* user interface
+  - reload fonts on window resize
+* Windows
+  - look up serial ports in the registry
+* Android
+  - UsbSerial: fix permission crash bug
+  - UsbSerial: fix null pointer crash bug
+  - negotiate MTU on Bluetooth HM10 devices
+  - fix circle airspace display problems on Adreno GPUs
+
+Version 7.29 - 2023/05/03
 * data files
   - reject implausible runway lengths in CUP files
   - fix crash when arc airspace has no center
   - allow xci files to be downloaded from repository
   - in OpenAir format use AC as Class and AY as Type (#1118)
+  - show correct line number on airspace file error
   - add RASP file selection
 * devices
   - ATR833: read-out active and standby frequencies
@@ -12,6 +47,7 @@ Version 7.29 - not yet released
 * Android
   - get rid of not usable USB interfaces in the 'Device -> Port' list
   - Upgrade targetSdkVersion to 31
+  - fix write errors to Bluetooth HM10 devices
 * Kobo
   - Add support for Libra H2O
   - Add support for Clara 2E
@@ -21,6 +57,9 @@ Version 7.29 - not yet released
   - Add an E-ink friendly trail type
   - Add Brightness control to Clara HD
   - Support Brightness and Colour for ComfortLight PRO models
+* Windows
+  - show serial port names
+  - support COM10..COM255
 * Polars
   - Add LS-5 polar
   - Add Silene E78 polar

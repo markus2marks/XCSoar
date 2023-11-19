@@ -47,6 +47,8 @@ public class HM10Port
   private final Object gattStateSync = new Object();
   private int gattState = BluetoothGatt.STATE_DISCONNECTED;
 
+  private boolean setupCharacteristicsPending = false;
+
   public HM10Port(Context context, BluetoothDevice device)
     throws IOException
   {
@@ -80,6 +82,20 @@ public class HM10Port
       throw new Error("GATT device name characteristic not found");
   }
 
+  private void setupCharacteristics() throws Error {
+    findCharacteristics();
+
+    if (!gatt.setCharacteristicNotification(dataCharacteristic, true))
+      throw new Error("Could not enable GATT characteristic notification");
+
+    BluetoothGattDescriptor descriptor =
+      dataCharacteristic.getDescriptor(BluetoothUuids.CLIENT_CHARACTERISTIC_CONFIGURATION);
+    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+    gatt.writeDescriptor(descriptor);
+    portState = STATE_READY;
+    stateChanged();
+  }
+
   @Override
   public void onConnectionStateChange(BluetoothGatt gatt,
       int status,
@@ -102,7 +118,7 @@ public class HM10Port
       error(e.getMessage());
     }
 
-    writeBuffer.clear();
+    writeBuffer.reset();
     stateChanged();
     synchronized (gattStateSync) {
       gattState = newState;
@@ -117,19 +133,13 @@ public class HM10Port
       if (BluetoothGatt.GATT_SUCCESS != status)
         throw new Error("Discovering GATT services failed");
 
-      findCharacteristics();
-
-      if (!gatt.setCharacteristicNotification(dataCharacteristic, true))
-        throw new Error("Could not enable GATT characteristic notification");
-
-      BluetoothGattDescriptor descriptor =
-        dataCharacteristic.getDescriptor(BluetoothUuids.CLIENT_CHARACTERISTIC_CONFIGURATION);
-      descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-      gatt.writeDescriptor(descriptor);
-      portState = STATE_READY;
+      /* request a high MTU (usually, HM-10 chips support 23 bytes);
+         postpone the setupCharacteristics() call until onMtuChanged()
+         is called - we can't do both at the same time */
+      setupCharacteristicsPending = true;
+      gatt.requestMtu(256);
     } catch (Error e) {
       error(e.getMessage());
-    } finally {
       stateChanged();
     }
   }
@@ -143,14 +153,11 @@ public class HM10Port
   @Override
   public void onCharacteristicWrite(BluetoothGatt gatt,
       BluetoothGattCharacteristic characteristic, int status) {
-    synchronized (writeBuffer) {
-      if (BluetoothGatt.GATT_SUCCESS == status) {
-        writeBuffer.beginWriteNextChunk(gatt, dataCharacteristic);
-        writeBuffer.notifyAll();
-      } else {
-        Log.e(TAG, "GATT characteristic write failed");
-        writeBuffer.setError();
-      }
+    if (BluetoothGatt.GATT_SUCCESS == status) {
+      writeBuffer.beginWriteNextChunk(gatt, dataCharacteristic);
+    } else {
+      Log.e(TAG, "GATT characteristic write failed");
+      writeBuffer.setError();
     }
   }
 
@@ -170,6 +177,25 @@ public class HM10Port
     }
   }
 
+  @Override
+  public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+    super.onMtuChanged(gatt, mtu, status);
+
+    if (status == BluetoothGatt.GATT_SUCCESS && mtu > 0)
+      writeBuffer.setMtu(mtu);
+
+    if (setupCharacteristicsPending) {
+      setupCharacteristicsPending = false;
+
+      try {
+        setupCharacteristics();
+      } catch (Error e) {
+        error(e.getMessage());
+        stateChanged();
+      }
+    }
+  }
+
   @Override public void setListener(PortListener _listener) {
     portListener = _listener;
   }
@@ -184,7 +210,7 @@ public class HM10Port
     safeDestruct.beginShutdown();
 
     shutdown = true;
-    writeBuffer.clear();
+    writeBuffer.reset();
     gatt.disconnect();
     synchronized (gattStateSync) {
       long waitUntil = System.currentTimeMillis() + DISCONNECT_TIMEOUT;
@@ -229,6 +255,12 @@ public class HM10Port
   public int write(byte[] data, int length) {
     if (0 == length)
       return 0;
+
+    if (portState != STATE_READY)
+      return 0;
+
+    assert(dataCharacteristic != null);
+    assert(deviceNameCharacteristic != null);
 
     return writeBuffer.write(gatt, dataCharacteristic,
                              deviceNameCharacteristic,

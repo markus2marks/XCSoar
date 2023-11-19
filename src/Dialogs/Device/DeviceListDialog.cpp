@@ -62,6 +62,7 @@ class DeviceListWidget final
     bool temperature:1;
     bool humidity:1;
     bool radio:1, transponder:1;
+    bool engine:1;
     bool debug:1;
 
     int8_t battery_percent;
@@ -106,6 +107,7 @@ class DeviceListWidget final
       radio = basic.settings.has_active_frequency || 
         basic.settings.has_standby_frequency;
       transponder = basic.settings.has_transponder_code;
+      engine = basic.engine.IsAnyDefined();
       battery_percent = basic.battery_level_available
         ? (int)basic.battery_level
         : -1;
@@ -411,6 +413,9 @@ DeviceListWidget::OnPaintItem(Canvas &canvas, const PixelRect rc,
       buffer.append(_T("; XPDR"));
     }
 
+    if (flags.engine)
+      buffer.append(_T("; Engine"));
+
     if (flags.debug) {
       buffer.append(_T("; "));
       buffer.append(_("Debug"));
@@ -437,9 +442,7 @@ DeviceListWidget::OnPaintItem(Canvas &canvas, const PixelRect rc,
 
     status = buffer;
 #ifdef ANDROID
-  } else if ((config.port_type == DeviceConfig::PortType::RFCOMM ||
-              config.port_type == DeviceConfig::PortType::BLE_HM10 ||
-              config.port_type == DeviceConfig::PortType::RFCOMM_SERVER) &&
+  } else if (config.IsAndroidBluetooth() &&
              bluetooth_helper != nullptr &&
              !bluetooth_helper->IsEnabled(Java::GetEnv())) {
     status = _("Bluetooth is disabled");
