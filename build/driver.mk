@@ -102,6 +102,7 @@ DRIVER_SOURCES = \
 	$(XCTRACER_SOURCES) \
 	$(THERMALEXPRESS_SOURCES) \
 	$(DRIVER_SRC_DIR)/AltairPro.cpp \
+	$(DRIVER_SRC_DIR)/Anemoi.cpp \
 	$(DRIVER_SRC_DIR)/BorgeltB50.cpp \
 	$(DRIVER_SRC_DIR)/XCVario.cpp \
 	$(DRIVER_SRC_DIR)/CaiGpsNav.cpp \
@@ -128,7 +129,8 @@ DRIVER_SOURCES = \
 	$(DRIVER_SRC_DIR)/KRT2.cpp \
 	$(DRIVER_SRC_DIR)/AirControlDisplay.cpp \
 	$(DRIVER_SRC_DIR)/ATR833/Device.cpp \
-	$(DRIVER_SRC_DIR)/ATR833/Register.cpp
+	$(DRIVER_SRC_DIR)/ATR833/Register.cpp \
+        $(DRIVER_SRC_DIR)/Larus.cpp 
 
 DRIVER_DEPENDS = TIME LIBNMEA GEO OPERATION
 

@@ -133,6 +133,7 @@ NMEAInfo::Reset()
   settings.Clear();
 
   external_wind_available.Clear();
+  external_instantaneous_wind_available.Clear();
 
   temperature_available = false;
   humidity_available = false;

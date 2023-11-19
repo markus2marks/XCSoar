@@ -4,6 +4,7 @@
 #include "Device/Register.hpp"
 #include "Device/Driver.hpp"
 #include "Device/Driver/AirControlDisplay.hpp"
+#include "Device/Driver/Anemoi.hpp"
 #include "Device/Driver/CAI302.hpp"
 #include "Device/Driver/CaiGpsNav.hpp"
 #include "Device/Driver/CaiLNav.hpp"
@@ -36,6 +37,7 @@
 #include "Device/Driver/LevilAHRS_G.hpp"
 #include "Device/Driver/BlueFlyVario.hpp"
 #include "Device/Driver/OpenVario.hpp"
+#include "Device/Driver/Larus.hpp"
 #include "Device/Driver/Vaulter.hpp"
 #include "Device/Driver/ATR833/Register.hpp"
 #include "Device/Driver/XCTracer.hpp"
@@ -70,6 +72,7 @@ static const struct DeviceRegister *const driver_list[] = {
   &flytec_driver,
   &ilec_driver,
   &westerboer_driver,
+  &larus_driver,
   &imi_driver,
   &flarm_driver,
   &flynet_driver,
@@ -85,6 +88,7 @@ static const struct DeviceRegister *const driver_list[] = {
   &xctracer_driver,
   &thermalexpress_driver,
   &acd_driver,
+  &anemoi_driver,
   nullptr
 };
 

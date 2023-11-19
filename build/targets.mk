@@ -58,6 +58,7 @@ USE_CROSSTOOL_NG := n
 
 TARGET_ARCH :=
 
+
 # virtual targets ("flavors")
 
 ifeq ($(TARGET),WIN64)
@@ -604,3 +605,11 @@ endif
 ifeq ($(TARGET),ANDROID)
   TARGET_EXEEXT :=
 endif
+
+
+$(info TARGET_ARCH="$(TARGET_ARCH)")
+$(info TARGET_IS_LINUX="$(TARGET_IS_LINUX)")
+$(info TARGET_IS_PI64="$(TARGET_IS_PI64)")
+$(info TARGET_IS_ARM="$(TARGET_IS_ARM)")
+$(info TARGET="$(TARGET)")
+

@@ -107,6 +107,8 @@ struct InfoBoxData {
    */
   void SetValue(const TCHAR *value) noexcept;
 
+  void SetValue(const TCHAR *format, double value) noexcept;
+
   void VFmtValue(fmt_tstring_view format_str, fmt_tformat_args args) noexcept {
     auto [p, _] = fmt::vformat_to_n(value.begin(), value.capacity() - 1,
                                     format_str, args);
@@ -239,6 +241,33 @@ struct InfoBoxData {
    * Set the InfoBox comment to the specified percentage value.
    */
   void SetCommentFromPercent(double value) noexcept;
+
+  template<typename... Args>
+  void FormatTitle(const TCHAR *fmt, Args&&... args) noexcept {
+    title.Format(fmt, args...);
+    title.CropIncompleteUTF8();
+  }
+
+  template<typename... Args>
+  void FormatValue(const TCHAR *fmt, Args&&... args) noexcept {
+    value.Format(fmt, args...);
+  }
+
+  template<typename... Args>
+  void FormatComment(const TCHAR *fmt, Args&&... args) noexcept {
+    comment.Format(fmt, args...);
+    comment.CropIncompleteUTF8();
+  }
+
+  template<typename... Args>
+  void UnsafeFormatValue(const TCHAR *fmt, Args&&... args) noexcept {
+    value.UnsafeFormat(fmt, args...);
+  }
+
+  template<typename... Args>
+  void UnsafeFormatComment(const TCHAR *fmt, Args&&... args) noexcept {
+    comment.UnsafeFormat(fmt, args...);
+  }
 
   /**
    * Sets the unit of the InfoBox value

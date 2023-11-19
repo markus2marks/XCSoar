@@ -158,6 +158,10 @@ namespace InfoBoxFactory
     e_EngineEGT,  /* Engine Exhaust Gas Temperature */
     e_EngineRPM,  /* Engine Revolutions Per Minute */
 
+    e_DriftAngle,
+    e_InstantaneousWindSpeed,
+    e_InstantaneousWindBearing,
+
     e_NUM_TYPES /* Last item */
   };
 

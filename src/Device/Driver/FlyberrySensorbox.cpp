@@ -108,7 +108,7 @@ void FlyberrySensorboxDevice::computeVario(struct NMEAInfo &info)
   // e.g. PRS 17CBA
   static uint32_t timestamp_temp = 0;
 
-  //std::cout <<  std::to_string(data->sensor1) << " " <<  std::to_string(data->sensor2) << " " <<  std::to_string(data->sensor3) << std::endl;
+  std::cout <<  std::to_string(data->sensor1) << " " <<  std::to_string(data->sensor2) << " " <<  std::to_string(data->sensor3) << std::endl;
 //  std::cout <<  std::to_string(data->ax) << " " <<  std::to_string(data->ay) << " " <<  std::to_string(data->az) << std::endl;
 
 

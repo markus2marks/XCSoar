@@ -8,6 +8,12 @@
 #include "Math/Angle.hpp"
 
 void
+InfoBoxData::SetValue(const TCHAR *format, double value) noexcept
+{
+  UnsafeFormatValue(format, (double)value);
+}
+
+void
 InfoBoxData::SetValue(Angle _value, const TCHAR *suffix) noexcept
 {
   assert(suffix != NULL);

@@ -16,6 +16,7 @@
 #include "TrafficLook.hpp"
 #include "FlarmTrafficLook.hpp"
 #include "InfoBoxLook.hpp"
+#include "WindArrowLook.hpp"
 #include "FinalGlideBarLook.hpp"
 #include "VarioBarLook.hpp"
 #include "IconLook.hpp"
