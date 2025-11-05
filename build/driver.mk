@@ -98,6 +98,9 @@ THERMALEXPRESS_SOURCES = \
 STRATUX_SOURCES = \
 	$(DRIVER_SRC_DIR)/Stratux/Driver.cpp
 
+CANAEROSPACE_SOURCES = \
+    $(DRIVER_SRC_DIR)/CANaerospace/marshal.c
+
 DRIVER_SOURCES = \
 	$(SRC)/Device/Driver.cpp \
 	$(SRC)/Device/Register.cpp \
@@ -140,7 +143,10 @@ DRIVER_SOURCES = \
 	$(DRIVER_SRC_DIR)/AirControlDisplay.cpp \
 	$(DRIVER_SRC_DIR)/Larus.cpp \
 	$(DRIVER_SRC_DIR)/ATR833/Device.cpp \
-	$(DRIVER_SRC_DIR)/ATR833/Register.cpp
+	$(DRIVER_SRC_DIR)/ATR833/Register.cpp \
+	$(DRIVER_SRC_DIR)/CANaerospace.cpp \
+	$(DRIVER_SRC_DIR)/FLARM/flarmPropagated.c \
+	$(CANAEROSPACE_SOURCES)
 
 DRIVER_DEPENDS = TIME LIBNMEA GEO OPERATION UNITS FMT PROFILE FLARM
 

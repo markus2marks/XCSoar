@@ -34,6 +34,7 @@ static const char *const port_type_strings[] = {
   "ble_hm10",
   "glider_link",
   "android_usb_serial",
+  "can",
   NULL
 };
 
@@ -198,6 +199,10 @@ Profile::GetDeviceConfig(const ProfileMap &map, unsigned n,
   MakeDeviceSettingName(buffer, "Port", n, "SecondDevice");
   map.Get(buffer, config.driver2_name);
 
+  MakeDeviceSettingName(buffer, "Port", n, "CANPortName");
+  map.Get(buffer, config.can_interface);
+
+  MakeDeviceSettingName(buffer, "Port", n, "CANPortBaudRate");
   MakeDeviceSettingName(buffer, "Port", n, "EngineType");
   if (!map.GetEnum(buffer, config.engine_type) ||
       unsigned(config.engine_type) >= unsigned(DeviceConfig::EngineType::MAX))

@@ -18,6 +18,10 @@ else
 PORT_SOURCES += $(SRC)/Device/Port/SerialPort.cpp
 endif
 
+PORT_SOURCES += \
+	$(SRC)/Device/Port/CANPort.cpp
+
+
 PORT_SOURCES += $(SRC)/Device/Port/TCPClientPort.cpp
 
 PORT_DEPENDS = FMT
