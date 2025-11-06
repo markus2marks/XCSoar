@@ -38,10 +38,12 @@ Copyright_License {
 #include <Geo/Gravity.hpp>
 
 class CANaerospaceDevice final : public AbstractDevice {
-//  Port &port;
+  Port &port;
 
 public:
-    CANaerospaceDevice([[maybe_unused]]Port &_port) {
+    CANaerospaceDevice(Port &_port):port(_port)
+    {
+
     }
 
     virtual bool DataReceived(std::span<const std::byte> s,
