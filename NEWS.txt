@@ -48,6 +48,10 @@ Version 7.44 - not yet released
   - the thermal assistant InfoBox is now clickable
   - Add support for multiple airspace files in UI
   - Add support for multiple waypoint files in UI
+  - Add support for multiple  airfields or details waypoint in UI
+  - QuickMenu: revamped look
+  - QuickMenu: sane cursor control
+
 * Android
   - fix crash on startup when loading icons on ldpi screens
   - update 'white list' of USB devices with one more VID/PID pair for SoftRF Academy
@@ -77,6 +81,7 @@ Version 7.44 - not yet released
   - Add port 4000 to tcp-client
 * Polar:
   - LS8-15m: default polar, set to values according to flight manual
+  - Imported 32 polars from Ideaflieg, Lk8000 and condorutil
 * Weglide:
   - add button under config menu to tigger IGC upload
 * Task:
