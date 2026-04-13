@@ -27,7 +27,7 @@ Copyright_License {
 #include "BufferedPort.hpp"
 #include "event/SocketEvent.hxx"
 #include "net/UniqueSocketDescriptor.hxx"
-#include "unix/tchar.h"
+#include "io/DataHandler.hpp"
 
 /**
  * A CAN listener port class.
@@ -43,7 +43,7 @@ public:
    * @param handler the callback object for input received on the
    * port
    */
-  CANPort(EventLoop &event_loop, const TCHAR *port_name,
+  CANPort(EventLoop &event_loop, const char *port_name,
           PortListener *_listener, DataHandler &_handler);
   /**
    * Closes the serial port (Destructor)

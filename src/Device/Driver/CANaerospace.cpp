@@ -53,7 +53,7 @@ public:
 std::map<int, double> canId2clock;
 auto last_fix = GeoPoint::Invalid();
 SpeedVector last_wind = SpeedVector::Zero();
-static FlarmState flarmState;
+static FlarmStateCAN flarmState;
 static FlarmMostImportantObjectData objectData;
 static FlarmObjectData flarmObjectData;
 
@@ -376,7 +376,7 @@ CANaerospaceDevice::DataReceived(std::span<const std::byte> s,
 
         case OUTSIDE_AIR_TEMP_ID:
             if (canasNetworkToHost(&canasMessage.data, canData, 4, CANAS_DATATYPE_FLOAT) > 0) {
-                info.temperature_available = true;
+                info.temperature_available.Update(info.clock);;
                 info.temperature = Temperature::FromKelvin(canasMessage.data.container.FLOAT);
                 return true;
             }
@@ -390,8 +390,8 @@ CANaerospaceDevice::DataReceived(std::span<const std::byte> s,
 }
 
 const struct DeviceRegister can_aerospace_driver = {
-        _T("CANaerospace"),
-        _T("CANaerospace"),
+        "CANaerospace",
+        "CANaerospace",
         DeviceRegister::NO_TIMEOUT | DeviceRegister::RAW_GPS_DATA, // TODO: Put the right flags
         CANaerospaceCreateOnPort,
 };

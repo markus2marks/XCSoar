@@ -3,9 +3,8 @@
 set -e
 
 export DEBIAN_FRONTEND=noninteractive
-declare -A APTOPTS
-APTOPTS[1]="--assume-yes"
-APTOPTS[2]="--no-install-recommends"
+# Indexed array keeps a stable flag order (associative [*] order is not guaranteed).
+APTOPTS=(--assume-yes --no-install-recommends)
 
 sections_to_install=()
 
@@ -26,9 +25,10 @@ update_pkg() {
 
 install_base() {
   echo Installing base dependencies...
-  apt-get install ${APTOPTS[*]} make \
+  apt-get install "${APTOPTS[@]}" make \
     librsvg2-bin xsltproc \
     imagemagick gettext sox \
+    python3-polib \
     git quilt zip \
     m4 automake wget \
     pkg-config cmake ninja-build ccache \
@@ -38,7 +38,7 @@ install_base() {
 
 install_manual() {
   echo Installing Manual dependencies...
-  apt-get install ${APTOPTS[*]} texlive \
+  apt-get install "${APTOPTS[@]}" texlive \
     texlive-latex-extra \
     texlive-luatex \
     texlive-lang-french \
@@ -51,7 +51,7 @@ install_manual() {
 
 install_linux() {
   echo Installing dependencies for the Linux target...
-  apt-get install ${APTOPTS[*]} make g++ \
+  apt-get install "${APTOPTS[@]}" make g++ \
     binutils-gold \
     zlib1g-dev \
     libfmt-dev \
@@ -79,36 +79,38 @@ install_linux() {
 
 install_wayland() {
   echo Installing dependencies for the Wayland target...
-  apt-get install ${APTOPTS[*]} wayland-protocols \
+  apt-get install "${APTOPTS[@]}" wayland-protocols \
     libwayland-bin
   echo
 }
 
 install_debian() {
   echo Installing dependencies for creating Debian package
-  apt-get install ${APTOPTS[*]} dpkg-dev \
+  apt-get install "${APTOPTS[@]}" dpkg-dev \
     debhelper \
     texlive-lang-english \
     libio-captureoutput-perl \
-    build-essential
+    build-essential \
+    xvfb \
+    xauth
   echo
 }
 
 install_llvm() {
   echo Installing dependencies for compiling with LLVM / Clang...
-  apt-get install ${APTOPTS[*]} llvm clang libc++-dev libc++abi-dev lld
+  apt-get install "${APTOPTS[@]}" llvm clang libc++-dev libc++abi-dev lld
   echo
 }
 
 install_libinput_gbm() {
   echo Installing dependencies for compiling targets which need libinput or GBM...
-  apt-get install ${APTOPTS[*]} libinput-dev libgbm-dev
+  apt-get install "${APTOPTS[@]}" libinput-dev libgbm-dev
   echo
 }
 
 install_arm() {
   echo Installing dependencies for ARM Linux targets...
-  apt-get install ${APTOPTS[*]} g++-arm-linux-gnueabihf \
+  apt-get install "${APTOPTS[@]}" g++-arm-linux-gnueabihf \
     libmpc-dev \
     meson
   echo
@@ -116,13 +118,13 @@ install_arm() {
 
 install_win() {
   echo Installing PC/WIN64 dependencies...
-  apt-get install ${APTOPTS[*]} g++-mingw-w64
+  apt-get install "${APTOPTS[@]}" g++-mingw-w64
   echo
 }
 
 install_kobo() {
   echo Installing Kobo dependencies...
-  apt-get install ${APTOPTS[*]} \
+  apt-get install "${APTOPTS[@]}" \
       texinfo \
       fakeroot \
       python3-setuptools \
@@ -133,8 +135,14 @@ install_kobo() {
 
 install_android() {
   echo Installing dependencies for the Android target, not including SDK / NDK...
-  apt-get install ${APTOPTS[*]} default-jdk-headless vorbis-tools adb libtool \
+  apt-get install "${APTOPTS[@]}" default-jdk-headless vorbis-tools adb libtool \
       unzip
+  echo
+}
+
+clean_pkg() {
+  echo Clean up downloaded resources in order to free space
+  apt-get clean
   echo
 }
 
@@ -184,9 +192,3 @@ for section in "${sections_to_install[@]}"; do
       ;;
   esac
 done
-
-clean_pkg() {
-  echo Clean up downloaded resources in order to free space
-  apt-get clean
-  echo
-}

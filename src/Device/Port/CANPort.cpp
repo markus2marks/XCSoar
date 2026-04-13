@@ -31,7 +31,7 @@ Copyright_License {
 #include <linux/can.h>
 #include <cstring>
 
-CANPort::CANPort(EventLoop &event_loop, const TCHAR *port_name,
+CANPort::CANPort(EventLoop &event_loop, const char *port_name,
                  PortListener *_listener, DataHandler &_handler)
                  : BufferedPort(_listener, _handler), socket(event_loop, BIND_THIS_METHOD(OnSocketReady))
 {

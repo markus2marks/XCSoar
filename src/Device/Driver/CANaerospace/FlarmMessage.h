@@ -14,7 +14,7 @@ typedef struct {
     uint8_t PowerState;
     uint8_t State;
     uint8_t ErrorCode;
-} FlarmState;
+} FlarmStateCAN;
 
 typedef struct {
     int8_t AlarmLevel;

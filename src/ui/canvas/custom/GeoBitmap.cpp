@@ -12,18 +12,12 @@
 
 #include <stdexcept>
 
-#include <tchar.h>
-
-#if !defined(USE_GEOTIFF) && defined(__GNUC__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=noreturn"
-#endif
-
-GeoQuadrilateral
-Bitmap::LoadGeoFile([[maybe_unused]] Path path)
-{
 #ifdef USE_GEOTIFF
-  if (path.EndsWithIgnoreCase(_T(".tif")) ||
-      path.EndsWithIgnoreCase(_T(".tiff"))) {
+GeoQuadrilateral
+Bitmap::LoadGeoFile(Path path)
+{
+  if (path.EndsWithIgnoreCase(".tif") ||
+      path.EndsWithIgnoreCase(".tiff")) {
     auto result = LoadGeoTiff(path);
     if (!Load(std::move(result.first)))
       throw std::runtime_error("Failed to use geo image file");
@@ -32,7 +26,13 @@ Bitmap::LoadGeoFile([[maybe_unused]] Path path)
 
     return result.second;
   }
-#endif
 
   throw std::runtime_error("Unsupported geo image file");
 }
+#else
+[[noreturn]] GeoQuadrilateral
+Bitmap::LoadGeoFile([[maybe_unused]] Path)
+{
+  throw std::runtime_error("Unsupported geo image file");
+}
+#endif
