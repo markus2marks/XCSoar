@@ -446,7 +446,13 @@ TEST_FLARM_MESSAGING_SOURCES = \
 	$(SRC)/FLARM/MessagingRecord.cpp \
 	$(SRC)/FLARM/MessagingDatabase.cpp \
 	$(SRC)/FLARM/MessagingFile.cpp \
+	$(SRC)/FLARM/Details.cpp \
+	$(SRC)/FLARM/Global.cpp \
+	$(SRC)/FLARM/TrafficDatabases.cpp \
+	$(SRC)/FLARM/FlarmNetDatabase.cpp \
+	$(SRC)/FLARM/NameDatabase.cpp \
 	$(SRC)/thread/Thread.cpp \
+	$(TEST_SRC_DIR)/FakeLanguage.cpp \
 	$(TEST_SRC_DIR)/tap.c \
 	$(TEST_SRC_DIR)/TestFlarmMessaging.cpp
 TEST_FLARM_MESSAGING_DEPENDS = IO OS MATH UTIL THREAD
@@ -1563,9 +1569,14 @@ RUN_FLYING_COMPUTER_SOURCES = \
 	$(SRC)/Formatter/TimeFormatter.cpp \
 	$(SRC)/Formatter/GeoPointFormatter.cpp \
 	$(SRC)/Formatter/NMEAFormatter.cpp \
+	$(SRC)/Polar/Shape.cpp \
+	$(SRC)/Polar/Polar.cpp \
+	$(SRC)/Polar/PolarStore.cpp \
 	$(SRC)/TransponderCode.cpp \
+	$(SRC)/Version.cpp \
+	$(SRC)/system/StandardVersion.cpp \
 	$(TEST_SRC_DIR)/RunFlyingComputer.cpp
-RUN_FLYING_COMPUTER_DEPENDS = $(DEBUG_REPLAY_DEPENDS) GEO MATH UTIL
+RUN_FLYING_COMPUTER_DEPENDS = $(DEBUG_REPLAY_DEPENDS) GEO MATH UTIL UNITS
 $(eval $(call link-program,RunFlyingComputer,RUN_FLYING_COMPUTER))
 
 RUN_CIRCLING_WIND_SOURCES = \
